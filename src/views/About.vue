@@ -6,12 +6,13 @@
     <b-card>
       <b-input-group prepend="Ваше ФИО">
         <b-form-input
-          id="input-live"
-          v-model="name"
           :state="nameState"
           aria-describedby="input-live-help input-live-feedback"
-          trim
           autofocus
+          id="input-live"
+          trim
+          v-model="inputName"
+          v-on:update="renderFormulas()"
         ></b-form-input>
 
         <b-form-invalid-feedback id="input-live-feedback">
@@ -44,34 +45,50 @@
 
       </b-card>
 
-      <div
+      <b-row
         v-if="coefficients"
-        class="mt-4 d-flex flex-row"
+        class="mt-4 text-monospace text-left text-nowrap"
       >
-        <div class="mr-4 text-monospace text-left text-nowrap fit-content">
-          <b-card>
-            <math-jax>Ф = {{ fullName.surname.length }}</math-jax>
-            <math-jax>И = {{ fullName.name.length }}</math-jax>
-            <math-jax>О = {{ fullName.fatherName.length }}</math-jax>
+        <b-col>
+          <b-card class="h-100">
+            <math-jax>
+              Ф = {{ fullName.surname.length || 0 }} \\
+              И = {{ fullName.name.length }} \\
+              О = {{ fullName.fatherName.length }}
+            </math-jax>
           </b-card>
-          <b-card class="mt-4">
+        </b-col>
+        <b-col>
+          <b-card class="h-100">
             <div v-for="{label, formula, result} in Object.values(coefficients)">
               {{ label }} = {{ formula }} = {{ result }}
             </div>
           </b-card>
-        </div>
-        <b-card class="w-100">
+        </b-col>
+      </b-row>
 
-        </b-card>
-      </div>
+      <b-card class="mt-4 w-100">
+      </b-card>
     </b-card>
   </b-container>
 </template>
 <script>
   import MathJax from "../components/MathJax";
+  import {debounce} from '../utils';
 
   export default {
     components: {MathJax},
+
+    data() {
+      return {
+        inputName: '',
+        name: '',
+        numbersAmount: 500,
+        formulasShown: true,
+        debounce: debounce(x => this.name = x, 500)
+      }
+    },
+
     computed: {
       nameState() {
         const length = this.name.split(' ').length;
@@ -114,10 +131,9 @@
       },
     },
 
-    data() {
-      return {
-        name: '',
-        numbersAmount: 500
+    methods: {
+      renderFormulas() {
+        this.debounce(this.inputName);
       }
     }
   }
