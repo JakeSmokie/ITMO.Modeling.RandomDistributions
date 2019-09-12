@@ -18,7 +18,17 @@
     },
 
     updated() {
-      this.formula = `$$ ${this.$el.getElementsByClassName('slot-wrapper')[0].innerHTML} $$`;
+      this.render();
+    },
+
+    mounted() {
+      this.render();
+    },
+
+    methods: {
+      render() {
+        this.formula = `$$ ${this.$el.getElementsByClassName('slot-wrapper')[0].innerHTML} $$`;
+      }
     }
   }
 </script>
