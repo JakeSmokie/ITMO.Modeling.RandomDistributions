@@ -19,7 +19,10 @@
         </b-form-invalid-feedback>
       </b-input-group>
 
-      <b-card no-body class="p-2 mt-4">
+      <b-card
+        no-body
+        class="p-2 mt-4"
+      >
         <b-form-group
           class="mb-0"
           label-cols="2"
@@ -47,9 +50,9 @@
       >
         <div class="mr-4 text-monospace text-left text-nowrap fit-content">
           <b-card>
-            <div>Ф = {{ fullName.surname.length }}</div>
-            <div>И = {{ fullName.name.length }}</div>
-            <div>О = {{ fullName.fatherName.length }}</div>
+            <math-jax>Ф = {{ fullName.surname.length }}</math-jax>
+            <math-jax>И = {{ fullName.name.length }}</math-jax>
+            <math-jax>О = {{ fullName.fatherName.length }}</math-jax>
           </b-card>
           <b-card class="mt-4">
             <div v-for="{label, formula, result} in Object.values(coefficients)">
@@ -65,7 +68,10 @@
   </b-container>
 </template>
 <script>
+  import MathJax from "../components/MathJax";
+
   export default {
+    components: {MathJax},
     computed: {
       nameState() {
         const length = this.name.split(' ').length;
