@@ -32,13 +32,13 @@
           label-align="center"
         >
           <template v-slot:label>
-            <katex class="mt-2">N = {{ numbersAmount }}</katex>
+            <katex class="mt-2">N = {{ valuesCount }}</katex>
           </template>
 
           <b-form-input
             class="pt-3 px-3"
             id="range"
-            v-model="numbersAmount"
+            v-model="valuesCount"
             type="range"
             min="50"
             max="1000"
@@ -64,11 +64,18 @@
             </b-card>
           </div>
           <b-card class="w-100">
-
+            <katex>
+              M = {{ coefficientsValues.Expected }} \\
+              \sigma = {{ standardDerivation }} \\
+              D = {{ variance }} \\
+              l = {{ radius | truncateNumber }} \\
+              a = {{ coefficientsValues.Expected - radius | truncateNumber }} \\
+              b = {{ coefficientsValues.Expected + radius | truncateNumber }} \\
+            </katex>
           </b-card>
         </div>
 
-        <b-card class="mt-4 w-100">
+        <b-card class="mt-4">
           <katex>
             V = \frac{\sigma}{\overline{x}} \qquad
             \sigma = V * \overline{x} = V * M =
@@ -77,10 +84,22 @@
 
             D = \sigma^2 = {{ variance }} \\ \: \\
             D = \frac{1}{12}(b - a)^2 = \frac{1}{12}(M + l - (M - l))^2 = \frac{1}{3}l^2 \\ \: \\
-            \frac{1}{3}l^2 = {{ variance }} \\ \: \\
-            l = \sqrt{ {{ variance }} * 3 } = \sqrt{ {{ variance * 3 }} } = {{ radius }}
-
+            \frac{1}{3}l^2 = {{ variance }} \qquad
+            l = \sqrt{ {{ variance }} * 3 } = \sqrt{ {{ variance * 3 }} } = {{ radius | truncateNumber }}
           </katex>
+        </b-card>
+
+        <b-button
+          block
+          variant="outline-primary"
+          class="mt-4"
+          v-on:click="generateValues()"
+        >
+          Сгенерировать значения
+        </b-button>
+
+        <b-card class="mt-4 text-left">
+          <div v-for="x in values">{{ x }}</div>
         </b-card>
       </template>
     </b-card>
@@ -95,7 +114,8 @@
     data() {
       return {
         name: '',
-        numbersAmount: 500,
+        valuesCount: 500,
+        values: [],
         formulasShown: true,
         debounce: debounce(x => this.name = x, 0)
       }
@@ -138,10 +158,10 @@
 
         return {
           Expected: {label: "А", formula: `${A} * 100`, result: A * 100},
-          VariationCoefficient: {label: "Б", formula: `1 / ${B}`, result: truncateNumber(1 / B)},
+          VariationCoefficient: {label: "Б", formula: `1 / ${B}`, result: 1 / B},
           C: {label: "В", formula: `${A} - ${C} * 10`, result: A - C * 10},
           D: {label: "Г", formula: `3 + ${A}`, result: 3 + A},
-          E: {label: "Д", formula: `1 + ${C} / ${B}`, result: truncateNumber(1 + C / B)},
+          E: {label: "Д", formula: `1 + ${C} / ${B}`, result: 1 + C / B},
           F: {label: "Е", formula: `(${A} * ${B}) + ${C}`, result: (A * B) + C},
         }
       },
@@ -154,7 +174,7 @@
       },
 
       standardDerivation() {
-        return truncateNumber(this.coefficientsValues.VariationCoefficient * this.coefficientsValues.Expected);
+        return this.coefficientsValues.VariationCoefficient * this.coefficientsValues.Expected;
       },
 
       variance() {
@@ -162,15 +182,28 @@
       },
 
       radius() {
-        return truncateNumber(Math.sqrt(this.variance * 3));
+        return Math.sqrt(this.variance * 3);
       },
 
       fullCoefficientsFormula() {
         return Object.values(this.coefficients)
-          .map(({label, formula, result}) => `${label} = ${formula} = ${result}`)
+          .map(({label, formula, result}) => `${label} = ${formula} = ${truncateNumber(result)}`)
           .join('\\\\');
       }
     },
+
+    methods: {
+      generateValues() {
+        this.values = [...Array(this.valuesCount).keys()]
+          .map(() => this.coefficientsValues.Expected + Math.random() * this.radius);
+      }
+    },
+
+    filters: {
+      truncateNumber(x) {
+        return truncateNumber(x);
+      }
+    }
   }
 </script>
 <style scoped>
