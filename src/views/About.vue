@@ -32,7 +32,7 @@
           label-align="center"
         >
           <template v-slot:label>
-            <katex>N = {{ numbersAmount }}</katex>
+            <katex class="mt-2">N = {{ numbersAmount }}</katex>
           </template>
 
           <b-form-input
