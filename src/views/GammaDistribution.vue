@@ -63,12 +63,13 @@
             </div>
             <b-card class="w-100">
               <katex class="my-auto text-center">
-                k = {{ coefficientsValues.Shape }} \\
-                \theta = {{ scale }} \\ \: \\
+                k = {{ coefficientsValues.Shape | truncate }} \\
+                \theta = {{ scale | truncate }} \\ \: \\
 
-                M_{теор} = {{ coefficientsValues.Expected }} \\
-                D_{теор} = {{ variance }} \\
+                M_{теор} = {{ coefficientsValues.Expected | truncate }} \\
+                D_{теор} = {{ variance | truncate }} \\
                 \sigma_{теор} = {{ standardDerivation | truncate }} \\
+                V_{теор} = {{ variationCoefficient | truncate(4) }} \\
               </katex>
             </b-card>
           </div>
@@ -232,6 +233,10 @@
         return Math.sqrt(this.variance);
       },
 
+      variationCoefficient() {
+        return this.standardDerivation / this.coefficientsValues.Expected;
+      },
+
       fullCoefficientsFormula() {
         return Object.values(this.coefficients)
           .map(({label, formula, result}) => `${label} = ${formula} = ${truncateNumber(result)}`)
@@ -360,7 +365,7 @@
       },
 
       variationCoefficientError() {
-        return Math.abs(this.actualVariationCoefficient - this.coefficientsValues.VariationCoefficient) / this.coefficientsValues.VariationCoefficient
+        return Math.abs(this.actualVariationCoefficient - this.variationCoefficient) / this.variationCoefficient
       }
 
     },
