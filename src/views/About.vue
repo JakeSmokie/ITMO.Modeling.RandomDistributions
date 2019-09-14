@@ -26,12 +26,15 @@
       >
         <b-form-group
           class="mb-0"
-          label-cols="2"
+          label-cols="3"
           description="Количество генерируемых значений"
-          :label="`N = ${numbersAmount}`"
           label-for="range"
-          label-align="right"
+          label-align="center"
         >
+          <template v-slot:label>
+            <katex>N = {{ numbersAmount }}</katex>
+          </template>
+
           <b-form-input
             class="pt-3 px-3"
             id="range"
