@@ -9,21 +9,20 @@
         class="mb-4"
       >
         <b-card>
-          <b-form-group
-            :state="nameState"
-            invalid-feedback="Введённая строка не является ФИО"
-          >
-            <b-input-group prepend="Ваше ФИО">
-              <b-form-input
-                aria-describedby="input-live-help input-live-feedback"
-                autofocus
-                id="input-live"
-                trim
-                v-model="name"
-                :state="nameState"
-              ></b-form-input>
-            </b-input-group>
-          </b-form-group>
+          <b-input-group prepend="Ваше ФИО">
+            <b-form-input
+              :state="nameState"
+              aria-describedby="input-live-help input-live-feedback"
+              autofocus
+              id="input-live"
+              trim
+              v-model="name"
+
+            ></b-form-input>
+            <b-form-invalid-feedback id="input-live-feedback">
+              Введённая строка не является ФИО
+            </b-form-invalid-feedback>
+          </b-input-group>
 
           <b-card
             no-body
