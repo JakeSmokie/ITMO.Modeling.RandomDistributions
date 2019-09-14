@@ -158,6 +158,7 @@
         step: 10,
         bigStep: 50,
         smallStep: 1,
+        midStep: 5,
 
         options: {
           responsive: true,
@@ -266,7 +267,7 @@
       },
 
       distributionChart() {
-        const step = this.step;
+        const step = this.midStep;
 
         return {
           labels: this.densityHistogram(step).map(([k]) => k),
