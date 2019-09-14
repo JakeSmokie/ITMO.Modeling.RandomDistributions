@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-row align-items-stretch">
-    <div class="text-nowrap bg-light border-right shadow-sm">
+    <div class="text-nowrap bg-light border-right shadow-sm min-vh-100">
       <div class="border-bottom p-2 pl-4 font-weight-bold" style="font-size: 20px">
         📗 Моделирование
       </div>
