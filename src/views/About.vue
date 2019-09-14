@@ -119,7 +119,7 @@
   </b-container>
 </template>
 <script>
-  import {debounce, truncateNumber} from '../utils';
+  import {debounce, roundBy, truncateNumber} from '../utils';
   import Katex from "../components/Katex";
   import {MersenneTwister19937, real} from "random-js";
 
@@ -215,8 +215,8 @@
 
       histogram() {
         return this.values
-          .groupBy(x => Math.round(x))
-          .map();
+          .groupBy(x => roundBy(x, 50))
+          .map(([k, xs]) => [k, xs.length]);
       }
     },
 

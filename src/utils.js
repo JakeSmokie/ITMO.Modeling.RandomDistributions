@@ -27,3 +27,7 @@ Array.prototype.groupBy = function (f) {
     return rv;
   }, {}));
 };
+
+export function roundBy(x, n) {
+  return Math.floor(x / n) * n;
+}
