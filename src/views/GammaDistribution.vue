@@ -66,16 +66,21 @@
                 V = {{ coefficientsValues.VariationCoefficient | truncate }} \\
                 M_{теор} = {{ coefficientsValues.Expected }} \\ \: \\
 
-                \theta = {{ shape }}
+                \theta = {{ scale }}
               </katex>
             </b-card>
           </div>
 
           <b-card class="mt-4">
             <katex>
-              M = k * \theta \qquad \theta = \frac{M}{k} =
-              \frac{ {{ coefficientsValues.Expected }} }{ {{ coefficientsValues.K }} } =
-              {{ shape | truncate }} \\
+              M = k * \theta \qquad
+              \theta = \frac{M}{k} =
+              \frac{ {{ coefficientsValues.Expected }} }{ {{ coefficientsValues.Shape }} } =
+              {{ scale | truncate }} \\
+
+              D = k * \theta^2 =
+              {{ coefficientsValues.Shape }} * {{ scale | truncate }}^2 =
+              {{ variance | truncate }} \\
             </katex>
           </b-card>
 
@@ -197,7 +202,7 @@
 
         return {
           Expected: {label: "А", formula: `${A} * 100`, result: A * 100},
-          K: {label: "Г", formula: `3 + ${A}`, result: 3 + A},
+          Shape: {label: "Г", formula: `3 + ${A}`, result: 3 + A},
           Seed: {label: "Е", formula: `(${A} * ${B}) + ${C}`, result: (A * B) + C},
         }
       },
@@ -209,8 +214,12 @@
         )
       },
 
-      shape() {
-        return this.coefficientsValues.Expected / this.coefficientsValues.K;
+      scale() {
+        return this.coefficientsValues.Expected / this.coefficientsValues.Shape;
+      },
+
+      variance() {
+        return this.coefficientsValues.Shape * this.scale * this.scale;
       },
 
       fullCoefficientsFormula() {
