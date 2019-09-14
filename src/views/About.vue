@@ -108,11 +108,6 @@
         v-if="values.length > 0"
       >
         <b-card class="text-left">
-          <template v-for="[k, xs] in histogram">
-            {{ k }} = {{ xs }}
-            <br>
-          </template>
-
           <line-chart
             :chartdata="chartdata"
             :options="options"
@@ -137,6 +132,7 @@
         values: [],
         formulasShown: true,
         debounce: debounce(x => this.name = x, 0),
+        step: 50,
 
         options: {
           responsive: true,
@@ -225,8 +221,8 @@
 
       histogram() {
         return this.values
-          .groupBy(x => roundBy(x, 50))
-          .map(([k, xs]) => [k, xs]);
+          .groupBy(x => roundBy(x, this.step))
+          .map(([k, xs]) => [k, xs.length / this.values.length]);
       },
 
       chartdata() {
@@ -234,9 +230,14 @@
           labels: this.histogram.map(([k]) => k),
           datasets: [
             {
-              label: 'Density',
+              label: 'Actual density',
               backgroundColor: '#f87979',
-              data: this.histogram.map(([, xs]) => xs.length)
+              data: this.histogram.map(([, xs]) => xs)
+            },
+            {
+              label: 'Expected density',
+              backgroundColor: '#FFFF00',
+              data: this.histogram.map(() => this.step / (2 * this.radius))
             }
           ]
         }
