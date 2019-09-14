@@ -9,8 +9,11 @@
   },
   "dependencies": {
     "bootstrap-vue": "^2.0.0-rc.19",
+    "chart.js": "^2.8.0",
     "core-js": "^2.6.5",
+    "random-js": "^2.1.0",
     "vue": "^2.6.10",
+    "vue-chartjs": "^3.4.2",
     "vue-katex": "^0.2.1",
     "vue-mathjax": "0.0.11",
     "vue-router": "^3.0.3",

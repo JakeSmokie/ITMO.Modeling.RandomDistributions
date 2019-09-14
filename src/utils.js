@@ -18,5 +18,12 @@ export function debounce(f, interval) {
 }
 
 export function truncateNumber(x) {
-  return Math.round( x * 100 + Number.EPSILON ) / 100;
+  return Math.round(x * 100 + Number.EPSILON) / 100;
 }
+
+Array.prototype.groupBy = function (f) {
+  return Object.entries(this.reduce((rv, x) => {
+    (rv[f(x)] = rv[f(x)] || []).push(x);
+    return rv;
+  }, {}));
+};
