@@ -362,7 +362,7 @@
     methods: {
       async generateValues() {
         this.values = [];
-        await sleep(50);
+        await sleep(0);
 
         const mt = MersenneTwister19937.seed(this.coefficientsValues.Seed);
         const random = () => real(this.leftEdge, this.rightEdge, true)(mt);
