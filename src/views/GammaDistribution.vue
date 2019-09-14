@@ -63,10 +63,13 @@
             </div>
             <b-card class="w-100">
               <katex class="my-auto text-center">
-                V = {{ coefficientsValues.VariationCoefficient | truncate }} \\
-                M_{теор} = {{ coefficientsValues.Expected }} \\ \: \\
+                k = {{ coefficientsValues.Shape }} \\
+                \theta = {{ scale }} \\ \: \\
 
-                \theta = {{ scale }}
+                M_{теор} = {{ coefficientsValues.Expected }} \\
+                D_{теор} = {{ variance }} \\ \: \\
+
+                
               </katex>
             </b-card>
           </div>
