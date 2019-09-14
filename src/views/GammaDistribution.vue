@@ -106,12 +106,13 @@
           M_{экс} = \sum{x_i * p_i} = {{ actualExpectedValue | truncate }} \\
           D_{экс} = M[x^2] - M^2[x] = {{ actualVariance | truncate }} \\
           \sigma_{экс} = \sqrt{D_{экс}} = {{ actualDerivation | truncate }} \\
-          V_{экс} = \frac{\sigma_{экс}}{M_{экс}} = {{ actualVariationCoefficient | truncate(4)}} \\ \: \\
+          \overline{x}_{экс} = {{ actualAverage | truncate }} \\
+          V_{экс} = \frac{\sigma_{экс}}{\overline{x}_{экс}} = {{ actualVariationCoefficient | truncate(4)}} \\ \: \\
 
           \omega_M = \frac{M_{экс} - M_{теор}}{M_{теор}} = {{ expectedValueError * 100 | truncate(4)}} \% \\
           \omega_D = \frac{D_{экс} - D_{теор}}{D_{теор}} = {{ varianceError * 100 | truncate(4)}} \% \\
           \omega_\sigma = \frac{\sigma_{экс} - \sigma_{теор}}{\sigma_{теор}}
-          = {{ derivationError * 100 | truncate(4)}} \% \\
+          = {{ derivationError * 100 | truncate(4) }} \% \\
           \omega_V = \frac{V_{экс} - V_{теор}}{V_{теор}} = {{ variationCoefficientError * 100 | truncate(4)}} \% \\
 
         </katex>
@@ -319,6 +320,12 @@
       actualExpectedValue() {
         return this.densityHistogram(this.smallStep)
           .map(([k, p]) => k * p)
+          .reduce((acc, x) => acc + x, 0);
+      },
+
+      actualAverage() {
+        return this.values
+          .map((x, _, arr) => x / arr.length)
           .reduce((acc, x) => acc + x, 0);
       },
 
