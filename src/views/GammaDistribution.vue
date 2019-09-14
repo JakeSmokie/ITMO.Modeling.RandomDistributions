@@ -32,7 +32,7 @@
             label-align="center"
           >
             <template v-slot:label>
-              <katex class="mt-2">N = {{ valuesCount }}</katex>
+              <katex class="mt-2 text-nowrap">N = {{ valuesCount }}</katex>
             </template>
 
             <b-form-input
@@ -41,7 +41,7 @@
               v-model="valuesCount"
               type="range"
               min="50"
-              max="10000"
+              max="20000"
               step="50"
               v-on:change="generateValues()"
             />
