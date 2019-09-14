@@ -1,128 +1,117 @@
 <template>
-  <b-container
-    fluid
-    class="main"
-  >
-    <b-row class="px-5">
-      <b-col
-        cols="auto"
-        class="mb-4"
+  <b-container fluid>
+    <b-card class="main mx-auto">
+      <b-input-group prepend="Ваше ФИО">
+        <b-form-input
+          :state="nameState"
+          aria-describedby="input-live-help input-live-feedback"
+          autofocus
+          id="input-live"
+          trim
+          v-model="name"
+
+        ></b-form-input>
+        <b-form-invalid-feedback id="input-live-feedback">
+          Введённая строка не является ФИО
+        </b-form-invalid-feedback>
+      </b-input-group>
+
+      <b-card
+        no-body
+        class="p-2 mt-4"
       >
-        <b-card>
-          <b-input-group prepend="Ваше ФИО">
-            <b-form-input
-              :state="nameState"
-              aria-describedby="input-live-help input-live-feedback"
-              autofocus
-              id="input-live"
-              trim
-              v-model="name"
+        <b-form-group
+          class="mb-0"
+          label-cols="3"
+          description="Количество генерируемых значений"
+          label-for="range"
+          label-align="center"
+        >
+          <template v-slot:label>
+            <katex class="mt-2">N = {{ valuesCount }}</katex>
+          </template>
 
-            ></b-form-input>
-            <b-form-invalid-feedback id="input-live-feedback">
-              Введённая строка не является ФИО
-            </b-form-invalid-feedback>
-          </b-input-group>
+          <b-form-input
+            class="pt-3 px-3"
+            id="range"
+            v-model="valuesCount"
+            type="range"
+            min="50"
+            max="10000"
+            step="100"
+          />
+        </b-form-group>
+      </b-card>
 
-          <b-card
-            no-body
-            class="p-2 mt-4"
-          >
-            <b-form-group
-              class="mb-0"
-              label-cols="3"
-              description="Количество генерируемых значений"
-              label-for="range"
-              label-align="center"
-            >
-              <template v-slot:label>
-                <katex class="mt-2">N = {{ valuesCount }}</katex>
-              </template>
-
-              <b-form-input
-                class="pt-3 px-3"
-                id="range"
-                v-model="valuesCount"
-                type="range"
-                min="50"
-                max="10000"
-                step="100"
-              />
-            </b-form-group>
-          </b-card>
-
-          <template v-if="coefficients">
-            <div class="mt-4 d-flex flex-row">
-              <div class="mr-4 text-monospace text-left text-nowrap fit-content d-flex flex-row">
-                <b-card class="mr-4">
-                  <katex>
-                    Ф = {{ fullName.surname.length || 0 }} \\
-                    И = {{ fullName.name.length }} \\
-                    О = {{ fullName.fatherName.length }} \\
-                  </katex>
-                </b-card>
-                <b-card>
-                  <katex>
-                    {{ fullCoefficientsFormula }}
-                  </katex>
-                </b-card>
-              </div>
-              <b-card class="w-100">
-                <katex>
-                  M = {{ coefficientsValues.Expected }} \\
-                  \sigma = {{ standardDerivation | truncateNumber }} \\
-                  D = {{ variance | truncateNumber }} \\
-                  l = {{ radius | truncateNumber }} \\
-                  a = {{ leftEdge | truncateNumber }} \\
-                  b = {{ rightEdge | truncateNumber }} \\
-                </katex>
-              </b-card>
-            </div>
-
-            <b-card class="mt-4">
+      <template v-if="coefficients">
+        <div class="mt-4 d-flex flex-row">
+          <div class="mr-4 text-monospace text-left text-nowrap fit-content d-flex flex-row">
+            <b-card class="mr-4">
               <katex>
-                V = \frac{\sigma}{\overline{x}} \qquad
-                \sigma = V * \overline{x} = V * M =
-                {{ coefficientsValues.VariationCoefficient | truncateNumber }} * {{ coefficientsValues.Expected }} =
-                {{ standardDerivation | truncateNumber }} \\ \: \\
-
-                D = \sigma^2 = {{ variance | truncateNumber }} \\ \: \\
-                D = \frac{1}{12}(b - a)^2 = \frac{1}{12}(M + l - (M - l))^2 = \frac{1}{3}l^2 \\ \: \\
-                \frac{1}{3}l^2 = {{ variance | truncateNumber }} \qquad
-                l = \sqrt{ {{ variance | truncateNumber }} * 3 } = \sqrt{ {{ variance * 3 | truncateNumber }} } = {{ radius | truncateNumber }}
+                Ф = {{ fullName.surname.length || 0 }} \\
+                И = {{ fullName.name.length }} \\
+                О = {{ fullName.fatherName.length }} \\
               </katex>
             </b-card>
+            <b-card>
+              <katex>
+                {{ fullCoefficientsFormula }}
+              </katex>
+            </b-card>
+          </div>
+          <b-card class="w-100">
+            <katex>
+              M = {{ coefficientsValues.Expected }} \\
+              \sigma = {{ standardDerivation | truncateNumber }} \\
+              D = {{ variance | truncateNumber }} \\
+              l = {{ radius | truncateNumber }} \\
+              a = {{ leftEdge | truncateNumber }} \\
+              b = {{ rightEdge | truncateNumber }} \\
+            </katex>
+          </b-card>
+        </div>
 
-            <b-button
-              block
-              variant="outline-primary"
-              class="mt-4"
-              v-on:click="generateValues()"
-            >
-              Сгенерировать значения
-            </b-button>
-          </template>
-        </b-card>
-      </b-col>
+        <b-card class="mt-4">
+          <katex>
+            V = \frac{\sigma}{\overline{x}} \qquad
+            \sigma = V * \overline{x} = V * M =
+            {{ coefficientsValues.VariationCoefficient | truncateNumber }} * {{ coefficientsValues.Expected }} =
+            {{ standardDerivation | truncateNumber }} \\ \: \\
 
-      <b-col
-        cols="auto"
-        v-if="values.length > 0"
-      >
-        <b-card class="text-left">
-          <line-chart
-            :chartdata="densityChart"
-            :options="options"
-          />
+            D = \sigma^2 = {{ variance | truncateNumber }} \\ \: \\
+            D = \frac{1}{12}(b - a)^2 = \frac{1}{12}(M + l - (M - l))^2 = \frac{1}{3}l^2 \\ \: \\
+            \frac{1}{3}l^2 = {{ variance | truncateNumber }} \qquad
+            l = \sqrt{ {{ variance | truncateNumber }} * 3 } = \sqrt{ {{ variance * 3 | truncateNumber }} } = {{ radius | truncateNumber }}
+          </katex>
         </b-card>
-        <b-card class="text-left mt-4">
-          <line-chart
-            :chartdata="distributionChart"
-            :options="options"
-          />
-        </b-card>
-      </b-col>
-    </b-row>
+
+        <b-button
+          block
+          variant="outline-primary"
+          class="mt-4"
+          v-on:click="generateValues()"
+        >
+          Сгенерировать значения
+        </b-button>
+      </template>
+    </b-card>
+
+    <div
+      v-if="values.length > 0"
+    >
+      <b-card class="text-left mt-4">
+        <line-chart
+          :chartdata="densityChart"
+          :options="options"
+        />
+      </b-card>
+      <b-card class="text-left mt-4">
+        <line-chart
+          :chartdata="distributionChart"
+          :options="options"
+        />
+      </b-card>
+    </div>
   </b-container>
 </template>
 <script>
@@ -267,13 +256,13 @@
           datasets: [
             {
               label: 'Actual distribution',
-              backgroundColor: '#f87979',
+              backgroundColor: 'rgba(248,121,121, 0.3)',
               data: this.calcDistribution(this.histogram.map(([, density]) => density))
                 .map(x => x.toFixed(3))
             },
             {
               label: 'Expected distribution',
-              backgroundColor: '#FFFF00',
+              backgroundColor: 'rgba(0,255,180,0.3)',
               data: this.calcDistribution(
                 this.histogram
                   .map(([k]) => k)
@@ -328,4 +317,7 @@
   }
 </script>
 <style scoped>
+  .main {
+    width: fit-content;
+  }
 </style>
