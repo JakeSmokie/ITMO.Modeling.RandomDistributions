@@ -16,3 +16,7 @@ export function debounce(f, interval) {
     );
   };
 }
+
+export function truncateNumber(x) {
+  return Math.round( x * 100 + Number.EPSILON ) / 100;
+}

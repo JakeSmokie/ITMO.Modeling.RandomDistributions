@@ -14,8 +14,7 @@
             autofocus
             id="input-live"
             trim
-            v-model="inputName"
-            v-on:update="renderFormulas()"
+            v-model="name"
             :state="nameState"
           ></b-form-input>
         </b-input-group>
@@ -74,7 +73,13 @@
             V = \frac{\sigma}{\overline{x}} \qquad
             \sigma = V * \overline{x} = V * M =
             {{ coefficientsValues.VariationCoefficient }} * {{ coefficientsValues.Expected }} =
-            {{ coefficientsValues.VariationCoefficient * coefficientsValues.Expected }} \\
+            {{ standardDerivation }} \\ \: \\
+
+            D = \sigma^2 = {{ variance }} \\ \: \\
+            D = \frac{1}{12}(b - a)^2 = \frac{1}{12}(M + l - (M - l))^2 = \frac{1}{3}l^2 \\ \: \\
+            \frac{1}{3}l^2 = {{ variance }} \\ \: \\
+            l = \sqrt{ {{ variance }} * 3 } = \sqrt{ {{ variance * 3 }} } = {{ radius }}
+
           </katex>
         </b-card>
       </template>
@@ -82,19 +87,22 @@
   </b-container>
 </template>
 <script>
-  import {debounce} from '../utils';
+  import {debounce, truncateNumber} from '../utils';
   import Katex from "../components/Katex";
 
   export default {
     components: {Katex},
     data() {
       return {
-        inputName: '',
         name: '',
         numbersAmount: 500,
         formulasShown: true,
         debounce: debounce(x => this.name = x, 0)
       }
+    },
+
+    mounted() {
+      this.name = 'Айгузин Иван Олегович';
     },
 
     computed: {
@@ -130,10 +138,10 @@
 
         return {
           Expected: {label: "А", formula: `${A} * 100`, result: A * 100},
-          VariationCoefficient: {label: "Б", formula: `1 / ${B}`, result: 1 / B},
+          VariationCoefficient: {label: "Б", formula: `1 / ${B}`, result: truncateNumber(1 / B)},
           C: {label: "В", formula: `${A} - ${C} * 10`, result: A - C * 10},
           D: {label: "Г", formula: `3 + ${A}`, result: 3 + A},
-          E: {label: "Д", formula: `1 + ${C} / ${B}`, result: 1 + C / B},
+          E: {label: "Д", formula: `1 + ${C} / ${B}`, result: truncateNumber(1 + C / B)},
           F: {label: "Е", formula: `(${A} * ${B}) + ${C}`, result: (A * B) + C},
         }
       },
@@ -145,18 +153,24 @@
         )
       },
 
+      standardDerivation() {
+        return truncateNumber(this.coefficientsValues.VariationCoefficient * this.coefficientsValues.Expected);
+      },
+
+      variance() {
+        return this.standardDerivation * this.standardDerivation
+      },
+
+      radius() {
+        return truncateNumber(Math.sqrt(this.variance * 3));
+      },
+
       fullCoefficientsFormula() {
         return Object.values(this.coefficients)
           .map(({label, formula, result}) => `${label} = ${formula} = ${result}`)
           .join('\\\\');
       }
     },
-
-    methods: {
-      renderFormulas() {
-        this.debounce(this.inputName);
-      }
-    }
   }
 </script>
 <style scoped>
