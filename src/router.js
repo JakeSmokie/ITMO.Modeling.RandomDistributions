@@ -10,6 +10,10 @@ export default new Router({
     {
       path: "/",
       component: () => import("./views/UniformDistribution.vue")
+    },
+    {
+      path: "/gamma",
+      component: () => import("./views/GammaDistribution.vue")
     }
   ]
 });
