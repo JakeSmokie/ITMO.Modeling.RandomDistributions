@@ -231,7 +231,7 @@
       histogram() {
         return this.values
           .groupBy(x => roundBy(x, this.step))
-          .map(([k, xs]) => [k, xs.length / this.values.length]);
+          .map(([k, xs]) => [Number(k), xs.length / this.values.length]);
       },
 
       densityChart() {
@@ -246,7 +246,17 @@
             {
               label: 'Expected density',
               backgroundColor: '#FFFF00',
-              data: this.histogram.map(() => this.step / (2 * this.radius))
+              data: this.histogram.map(([k], i) => {
+                if (i === 0) {
+                  return (k + this.step - this.leftEdge) / (2 * this.radius);
+                }
+
+                if (i === this.histogram.length - 1) {
+                  return (this.rightEdge - k) / (2 * this.radius);
+                }
+
+                return this.step / (2 * this.radius);
+              })
             }
           ]
         }
@@ -264,7 +274,17 @@
             {
               label: 'Expected distribution',
               backgroundColor: '#FFFF00',
-              data: this.calcDistribution(this.histogram.map(() => this.step / (2 * this.radius)))
+              data: this.calcDistribution(this.histogram.map(([k], i) => {
+                if (i === 0) {
+                  return (k + this.step - this.leftEdge) / (2 * this.radius);
+                }
+
+                if (i === this.histogram.length - 1) {
+                  return (this.rightEdge - k) / (2 * this.radius);
+                }
+
+                return this.step / (2 * this.radius);
+              }))
             }
           ]
         }
