@@ -1,7 +1,19 @@
 <template>
-  <b-container fluid>
-    <router-view/>
-  </b-container>
+  <div class="d-flex flex-row align-items-stretch">
+    <div class="text-nowrap bg-light border-right shadow-sm">
+      <div class="border-bottom p-2 pl-4 font-weight-bold" style="font-size: 20px">
+        📗 Моделирование
+      </div>
+      <b-nav vertical class="p-2">
+        <b-nav-item active>Равномерное распределение</b-nav-item>
+        <b-nav-item>Распределение Эрланга</b-nav-item>
+      </b-nav>
+    </div>
+
+    <b-container fluid class="px-0">
+      <router-view/>
+    </b-container>
+  </div>
 </template>
 
 <style lang="scss">
