@@ -115,15 +115,21 @@
 
         </katex>
       </b-card>
-      <b-card class="text-left mt-4">
+      <b-card class="mt-4">
         <line-chart
           :chartdata="densityChart"
           :options="options"
         />
       </b-card>
-      <b-card class="text-left mt-4">
+      <b-card class="mt-4">
         <line-chart
           :chartdata="distributionChart"
+          :options="options"
+        />
+      </b-card>
+      <b-card class="mt-4">
+        <bar-chart
+          :chartdata="countChart"
           :options="options"
         />
       </b-card>
@@ -135,9 +141,10 @@
   import Katex from "../components/Katex";
   import {MersenneTwister19937, real} from "random-js";
   import LineChart from "../components/LineChart.js";
+  import BarChart from "../components/BarChart";
 
   export default {
-    components: {LineChart, Katex},
+    components: {BarChart, LineChart, Katex},
     data() {
       return {
         name: '',
@@ -146,6 +153,7 @@
         formulasShown: true,
         debounce: debounce(x => this.name = x, 0),
         step: 10,
+        bigStep: 50,
 
         options: {
           responsive: true,
@@ -234,65 +242,82 @@
       },
 
       histogram() {
-        return this.values
-          .groupBy(x => roundBy(x, this.step))
+        return step => this.values
+          .groupBy(x => roundBy(x, step))
           .map(([k, xs]) => [Number(k), xs.length / this.values.length]);
       },
 
       densityChart() {
+        const step = this.step;
+
         return {
-          labels: this.histogram.map(([k]) => k),
+          labels: this.histogram(step).map(([k]) => k),
           datasets: [{
             label: 'Actual density',
             backgroundColor: 'rgba(248,121,121, 0.3)',
-            data: this.histogram.map(([, xs]) => xs)
+            data: this.histogram(step).map(([, xs]) => xs)
           }, {
             label: 'Expected density',
             backgroundColor: 'rgba(0,255,180,0.3)',
-            data: this.histogram.map(([k], i) => {
-              if (i === 0) {
-                return (k + this.step - this.leftEdge) / (2 * this.radius);
-              }
-
-              if (i === this.histogram.length - 1) {
-                return (this.rightEdge - k) / (2 * this.radius);
-              }
-
-              return this.step / (2 * this.radius);
-            })
+            data: this.histogram(step)
+              .map(([k]) => k)
+              .map(this.calcSectionLength(step))
+              .map(k => k / (2 * this.radius))
           }]
         }
       },
 
       distributionChart() {
+        const step = this.step;
+
         return {
-          labels: this.histogram.map(([k]) => k),
+          labels: this.histogram(step).map(([k]) => k),
           datasets: [{
             label: 'Actual distribution',
             backgroundColor: 'rgba(248,121,121, 0.3)',
-            data: this.calcDistribution(this.histogram.map(([, density]) => density))
+            data: this.calcDistribution(this.histogram(step).map(([, density]) => density))
               .map(x => x.toFixed(3))
           }, {
             label: 'Expected distribution',
             backgroundColor: 'rgba(0,255,180,0.3)',
             data: this.calcDistribution(
-              this.histogram
+              this.histogram(step)
                 .map(([k]) => k)
-                .map(this.calcSectionLength)
+                .map(this.calcSectionLength(step))
                 .map(k => k / (2 * this.radius))
             ).map(x => x.toFixed(3))
           }]
         }
       },
 
+      countChart() {
+        const step = this.bigStep;
+
+        return {
+          labels: this.histogram(step).map(([k]) => k),
+          datasets: [{
+            label: 'Actual count',
+            backgroundColor: 'rgba(248,121,121, 0.3)',
+            data: this.histogram(step).map(([, xs]) => xs)
+          }, {
+            label: 'Expected count',
+            backgroundColor: 'rgba(0,255,180,0.3)',
+            data: this.histogram(step)
+              .map(([k]) => k)
+              .map(this.calcSectionLength(step))
+              .map(k => k / (2 * this.radius))
+          }]
+        }
+      },
+
       actualExpectedValue() {
-        return this.histogram
+        return this.histogram(this.step)
           .map(([k, p]) => k * p)
           .reduce((acc, x) => acc + x, 0);
       },
 
       actualSquaredExpectedValue() {
-        return this.histogram
+        return this.histogram(this.step)
           .map(([k, p]) => k * k * p)
           .reduce((acc, x) => acc + x, 0);
       },
@@ -348,16 +373,18 @@
         }, null)
       },
 
-      calcSectionLength(k, i, arr) {
-        if (i === 0) {
-          return k + this.step - this.leftEdge;
-        }
+      calcSectionLength(step) {
+        return (k, i, arr) => {
+          if (i === 0) {
+            return k + step - this.leftEdge;
+          }
 
-        if (i === arr.length - 1) {
-          return this.rightEdge - k;
-        }
+          if (i === arr.length - 1) {
+            return this.rightEdge - k;
+          }
 
-        return this.step;
+          return step;
+        }
       }
     },
 
