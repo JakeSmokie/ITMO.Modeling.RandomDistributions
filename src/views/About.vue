@@ -42,27 +42,30 @@
             step="50"
           />
         </b-form-group>
-
       </b-card>
 
-      <b-row
+      <div
         v-if="coefficients"
-        class="mt-4 text-monospace text-left text-nowrap"
+        class="mt-4 d-flex flex-row"
       >
-        <b-col>
+        <div class="mr-4 text-monospace text-left text-nowrap fit-content">
           <b-card>
             <katex>
               Ф = {{ fullName.surname.length || 0 }} \\
               И = {{ fullName.name.length }} \\
               О = {{ fullName.fatherName.length }} \\
-
-              \:\\
-
+            </katex>
+          </b-card>
+          <b-card class="mt-4">
+            <katex>
               {{ fullCoefficientsFormula }}
             </katex>
           </b-card>
-        </b-col>
-      </b-row>
+        </div>
+        <b-card class="w-100">
+
+        </b-card>
+      </div>
 
       <b-card class="mt-4 w-100">
       </b-card>
