@@ -68,8 +68,8 @@
               <b-card class="w-100">
                 <katex>
                   M = {{ coefficientsValues.Expected }} \\
-                  \sigma = {{ standardDerivation }} \\
-                  D = {{ variance }} \\
+                  \sigma = {{ standardDerivation | truncateNumber }} \\
+                  D = {{ variance | truncateNumber }} \\
                   l = {{ radius | truncateNumber }} \\
                   a = {{ leftEdge | truncateNumber }} \\
                   b = {{ rightEdge | truncateNumber }} \\
@@ -81,13 +81,13 @@
               <katex>
                 V = \frac{\sigma}{\overline{x}} \qquad
                 \sigma = V * \overline{x} = V * M =
-                {{ coefficientsValues.VariationCoefficient }} * {{ coefficientsValues.Expected }} =
-                {{ standardDerivation }} \\ \: \\
+                {{ coefficientsValues.VariationCoefficient | truncateNumber }} * {{ coefficientsValues.Expected }} =
+                {{ standardDerivation | truncateNumber }} \\ \: \\
 
-                D = \sigma^2 = {{ variance }} \\ \: \\
+                D = \sigma^2 = {{ variance | truncateNumber }} \\ \: \\
                 D = \frac{1}{12}(b - a)^2 = \frac{1}{12}(M + l - (M - l))^2 = \frac{1}{3}l^2 \\ \: \\
-                \frac{1}{3}l^2 = {{ variance }} \qquad
-                l = \sqrt{ {{ variance }} * 3 } = \sqrt{ {{ variance * 3 }} } = {{ radius | truncateNumber }}
+                \frac{1}{3}l^2 = {{ variance | truncateNumber }} \qquad
+                l = \sqrt{ {{ variance | truncateNumber }} * 3 } = \sqrt{ {{ variance * 3 | truncateNumber }} } = {{ radius | truncateNumber }}
               </katex>
             </b-card>
 
