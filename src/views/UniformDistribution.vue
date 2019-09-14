@@ -241,25 +241,31 @@
           .join('\\\\');
       },
 
-      histogram() {
+      densityHistogram() {
         return step => this.values
           .groupBy(x => roundBy(x, step))
           .map(([k, xs]) => [Number(k), xs.length / this.values.length]);
+      },
+
+      countHistogram() {
+        return step => this.values
+          .groupBy(x => roundBy(x, step))
+          .map(([k, xs]) => [Number(k), xs.length]);
       },
 
       densityChart() {
         const step = this.step;
 
         return {
-          labels: this.histogram(step).map(([k]) => k),
+          labels: this.densityHistogram(step).map(([k]) => k),
           datasets: [{
             label: 'Actual density',
             backgroundColor: 'rgba(248,121,121, 0.3)',
-            data: this.histogram(step).map(([, xs]) => xs)
+            data: this.densityHistogram(step).map(([, xs]) => xs)
           }, {
             label: 'Expected density',
             backgroundColor: 'rgba(0,255,180,0.3)',
-            data: this.histogram(step)
+            data: this.densityHistogram(step)
               .map(([k]) => k)
               .map(this.calcSectionLength(step))
               .map(k => k / (2 * this.radius))
@@ -271,17 +277,17 @@
         const step = this.step;
 
         return {
-          labels: this.histogram(step).map(([k]) => k),
+          labels: this.densityHistogram(step).map(([k]) => k),
           datasets: [{
             label: 'Actual distribution',
             backgroundColor: 'rgba(248,121,121, 0.3)',
-            data: this.calcDistribution(this.histogram(step).map(([, density]) => density))
+            data: this.calcDistribution(this.densityHistogram(step).map(([, density]) => density))
               .map(x => x.toFixed(3))
           }, {
             label: 'Expected distribution',
             backgroundColor: 'rgba(0,255,180,0.3)',
             data: this.calcDistribution(
-              this.histogram(step)
+              this.densityHistogram(step)
                 .map(([k]) => k)
                 .map(this.calcSectionLength(step))
                 .map(k => k / (2 * this.radius))
@@ -292,32 +298,33 @@
 
       countChart() {
         const step = this.bigStep;
+        const histogram = this.countHistogram(step);
 
         return {
-          labels: this.histogram(step).map(([k]) => k),
+          labels: histogram.map(([k]) => k),
           datasets: [{
             label: 'Actual count',
             backgroundColor: 'rgba(248,121,121, 0.3)',
-            data: this.histogram(step).map(([, xs]) => xs)
+            data: histogram.map(([, xs]) => xs)
           }, {
             label: 'Expected count',
             backgroundColor: 'rgba(0,255,180,0.3)',
-            data: this.histogram(step)
+            data: histogram
               .map(([k]) => k)
               .map(this.calcSectionLength(step))
-              .map(k => k / (2 * this.radius))
+              .map(k => this.values.length * k / (2 * this.radius))
           }]
         }
       },
 
       actualExpectedValue() {
-        return this.histogram(this.step)
+        return this.densityHistogram(this.step)
           .map(([k, p]) => k * p)
           .reduce((acc, x) => acc + x, 0);
       },
 
       actualSquaredExpectedValue() {
-        return this.histogram(this.step)
+        return this.densityHistogram(this.step)
           .map(([k, p]) => k * k * p)
           .reduce((acc, x) => acc + x, 0);
       },
