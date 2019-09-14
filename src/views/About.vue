@@ -3,10 +3,7 @@
     fluid
     class="main"
   >
-    <b-row
-      class="px-5"
-      align-h="center"
-    >
+    <b-row class="px-5">
       <b-col cols="auto">
         <b-card>
           <b-form-group
@@ -46,8 +43,8 @@
                 v-model="valuesCount"
                 type="range"
                 min="50"
-                max="1000"
-                step="50"
+                max="10000"
+                step="100"
               />
             </b-form-group>
           </b-card>
@@ -106,32 +103,40 @@
         </b-card>
       </b-col>
 
-      <b-col cols="4">
+      <b-col
+        cols="4"
+        v-if="values.length > 0"
+      >
         <b-card class="text-left">
-          <div>
-            <template v-for="[k, xs] in histogram">
-              {{ k }} = {{ xs }} <br>
-            </template>
-          </div>
+          <line-chart
+            :chartdata="chartdata"
+            :options="options"
+          />
         </b-card>
       </b-col>
     </b-row>
   </b-container>
 </template>
 <script>
-  import {debounce, roundBy, truncateNumber} from '../utils';
+  import {debounce, roundBy, sleep, truncateNumber} from '../utils';
   import Katex from "../components/Katex";
   import {MersenneTwister19937, real} from "random-js";
+  import LineChart from "../components/LineChart.js";
 
   export default {
-    components: {Katex},
+    components: {LineChart, Katex},
     data() {
       return {
         name: '',
         valuesCount: 500,
         values: [],
         formulasShown: true,
-        debounce: debounce(x => this.name = x, 0)
+        debounce: debounce(x => this.name = x, 0),
+
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
       }
     },
 
@@ -217,11 +222,27 @@
         return this.values
           .groupBy(x => roundBy(x, 50))
           .map(([k, xs]) => [k, xs.length]);
-      }
+      },
+
+      chartdata() {
+        return {
+          labels: this.histogram.map(([k]) => k),
+          datasets: [
+            {
+              label: 'Density',
+              backgroundColor: '#f87979',
+              data: this.histogram.map(([, x]) => x)
+            }
+          ]
+        }
+      },
     },
 
     methods: {
-      generateValues() {
+      async generateValues() {
+        this.values = [];
+        await sleep(50);
+
         const mt = MersenneTwister19937.seed(this.coefficients.Seed);
         const random = () => real(this.leftEdge, this.rightEdge, true)(mt);
 
