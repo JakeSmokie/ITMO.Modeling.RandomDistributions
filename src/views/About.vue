@@ -4,7 +4,10 @@
     class="main"
   >
     <b-row class="px-5">
-      <b-col cols="auto">
+      <b-col
+        cols="auto"
+        class="mb-4"
+      >
         <b-card>
           <b-form-group
             :state="nameState"
@@ -104,12 +107,18 @@
       </b-col>
 
       <b-col
-        cols="4"
+        cols="auto"
         v-if="values.length > 0"
       >
         <b-card class="text-left">
           <line-chart
-            :chartdata="chartdata"
+            :chartdata="densityChart"
+            :options="options"
+          />
+        </b-card>
+        <b-card class="text-left mt-4">
+          <line-chart
+            :chartdata="distributionChart"
             :options="options"
           />
         </b-card>
@@ -225,7 +234,7 @@
           .map(([k, xs]) => [k, xs.length / this.values.length]);
       },
 
-      chartdata() {
+      densityChart() {
         return {
           labels: this.histogram.map(([k]) => k),
           datasets: [
@@ -242,6 +251,24 @@
           ]
         }
       },
+
+      distributionChart() {
+        return {
+          labels: this.histogram.map(([k]) => k),
+          datasets: [
+            {
+              label: 'Actual distribution',
+              backgroundColor: '#f87979',
+              data: this.calcDistribution(this.histogram.map(([, xs]) => xs))
+            },
+            {
+              label: 'Expected distribution',
+              backgroundColor: '#FFFF00',
+              data: this.calcDistribution(this.histogram.map(() => this.step / (2 * this.radius)))
+            }
+          ]
+        }
+      },
     },
 
     methods: {
@@ -252,8 +279,17 @@
         const mt = MersenneTwister19937.seed(this.coefficientsValues.Seed);
         const random = () => real(this.leftEdge, this.rightEdge, true)(mt);
 
-        this.values = [...Array(Number(this.valuesCount)).keys()]
-          .map(random);
+        this.values = [...Array(Number(this.valuesCount)).keys()].map(random);
+      },
+
+      calcDistribution(xs) {
+        return xs.reduce((acc, xs) => {
+          if (acc) {
+            acc.push(xs + acc[acc.length - 1]);
+          }
+
+          return acc || [xs];
+        }, null)
       }
     },
 
