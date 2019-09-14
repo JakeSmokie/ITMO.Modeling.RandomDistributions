@@ -61,7 +61,7 @@
             </b-card>
           </div>
           <b-card class="w-100">
-            <katex class="my-auto">
+            <katex class="my-auto text-center">
               V = {{ coefficientsValues.VariationCoefficient | truncate }} \\
               M_{теор} = {{ coefficientsValues.Expected }} \\ \: \\
               \sigma_{теор} = {{ standardDerivation | truncate }} \\
@@ -133,6 +133,7 @@
           :options="options"
         />
       </b-card>
+      <div class="mt-4"></div>
     </div>
   </b-container>
 </template>

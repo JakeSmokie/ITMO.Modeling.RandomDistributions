@@ -62,28 +62,14 @@
           </div>
           <b-card class="w-100">
             <katex class="my-auto">
-              V = {{ coefficientsValues.VariationCoefficient | truncate }} \\
-              M_{теор} = {{ coefficientsValues.Expected }} \\ \: \\
-              \sigma_{теор} = {{ standardDerivation | truncate }} \\
-              D_{теор} = {{ variance | truncate }} \\ \: \\
-              l = {{ radius | truncate }} \\
-              a = {{ leftEdge | truncate }} \\
-              b = {{ rightEdge | truncate }} \\
+
             </katex>
           </b-card>
         </div>
 
         <b-card class="mt-4">
           <katex>
-            V = \frac{\sigma}{\overline{x}} \qquad
-            \sigma = V * \overline{x} = V * M =
-            {{ coefficientsValues.VariationCoefficient | truncate }} * {{ coefficientsValues.Expected }} =
-            {{ standardDerivation | truncate }} \\ \: \\
 
-            D = \sigma^2 = {{ variance | truncate }} \\ \: \\
-            D_{uniform} = \frac{1}{12}(b - a)^2 = \frac{1}{12}(M + l - (M - l))^2 = \frac{1}{3}l^2 \\ \: \\
-            \frac{1}{3}l^2 = {{ variance | truncate }} \qquad
-            l = \sqrt{ {{ variance | truncate }} * 3 } = \sqrt{ {{ variance * 3 | truncate }} } = {{ radius | truncate }}
           </katex>
         </b-card>
 
