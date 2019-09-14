@@ -108,6 +108,11 @@
         v-if="values.length > 0"
       >
         <b-card class="text-left">
+          <template v-for="[k, xs] in histogram">
+            {{ k }} = {{ xs }}
+            <br>
+          </template>
+
           <line-chart
             :chartdata="chartdata"
             :options="options"
@@ -221,7 +226,7 @@
       histogram() {
         return this.values
           .groupBy(x => roundBy(x, 50))
-          .map(([k, xs]) => [k, xs.length]);
+          .map(([k, xs]) => [k, xs]);
       },
 
       chartdata() {
@@ -231,7 +236,7 @@
             {
               label: 'Density',
               backgroundColor: '#f87979',
-              data: this.histogram.map(([, x]) => x)
+              data: this.histogram.map(([, xs]) => xs.length)
             }
           ]
         }
@@ -243,7 +248,7 @@
         this.values = [];
         await sleep(50);
 
-        const mt = MersenneTwister19937.seed(this.coefficients.Seed);
+        const mt = MersenneTwister19937.seed(this.coefficientsValues.Seed);
         const random = () => real(this.leftEdge, this.rightEdge, true)(mt);
 
         this.values = [...Array(Number(this.valuesCount)).keys()]
