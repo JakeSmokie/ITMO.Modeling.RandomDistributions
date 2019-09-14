@@ -41,7 +41,7 @@
               v-model="valuesCount"
               type="range"
               min="50"
-              max="10000"
+              max="20000"
               step="50"
               v-on:change="generateValues()"
             />
