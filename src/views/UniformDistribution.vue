@@ -160,6 +160,7 @@
         debounce: debounce(x => this.name = x, 0),
         step: 10,
         bigStep: 50,
+        smallStep: 1,
 
         options: {
           responsive: true,
@@ -324,13 +325,13 @@
       },
 
       actualExpectedValue() {
-        return this.densityHistogram(this.step)
+        return this.densityHistogram(this.smallStep)
           .map(([k, p]) => k * p)
           .reduce((acc, x) => acc + x, 0);
       },
 
       actualSquaredExpectedValue() {
-        return this.densityHistogram(this.step)
+        return this.densityHistogram(this.smallStep)
           .map(([k, p]) => k * k * p)
           .reduce((acc, x) => acc + x, 0);
       },
