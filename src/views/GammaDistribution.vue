@@ -360,7 +360,6 @@
         });
 
         this.values = [...Array(Number(this.valuesCount)).keys()].map(() => random.next().value);
-        console.log(this.values);
       },
 
       calcDistribution(densities) {
