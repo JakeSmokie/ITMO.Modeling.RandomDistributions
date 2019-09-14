@@ -48,31 +48,36 @@
         </b-form-group>
       </b-card>
 
-      <div
-        v-if="coefficients"
-        class="mt-4 d-flex flex-row"
-      >
-        <div class="mr-4 text-monospace text-left text-nowrap fit-content">
-          <b-card>
-            <katex>
-              Ф = {{ fullName.surname.length || 0 }} \\
-              И = {{ fullName.name.length }} \\
-              О = {{ fullName.fatherName.length }} \\
-            </katex>
-          </b-card>
-          <b-card class="mt-4">
-            <katex>
-              {{ fullCoefficientsFormula }}
-            </katex>
+      <template v-if="coefficients">
+        <div class="mt-4 d-flex flex-row">
+          <div class="mr-4 text-monospace text-left text-nowrap fit-content d-flex flex-row">
+            <b-card class="mr-4">
+              <katex>
+                Ф = {{ fullName.surname.length || 0 }} \\
+                И = {{ fullName.name.length }} \\
+                О = {{ fullName.fatherName.length }} \\
+              </katex>
+            </b-card>
+            <b-card>
+              <katex>
+                {{ fullCoefficientsFormula }}
+              </katex>
+            </b-card>
+          </div>
+          <b-card class="w-100">
+
           </b-card>
         </div>
-        <b-card class="w-100">
 
+        <b-card class="mt-4 w-100">
+          <katex>
+            V = \frac{\sigma}{\overline{x}} \qquad
+            \sigma = V * \overline{x} = V * M =
+            {{ coefficientsValues.VariationCoefficient }} * {{ coefficientsValues.Expected }} =
+            {{ coefficientsValues.VariationCoefficient * coefficientsValues.Expected }} \\
+          </katex>
         </b-card>
-      </div>
-
-      <b-card class="mt-4 w-100">
-      </b-card>
+      </template>
     </b-card>
   </b-container>
 </template>
@@ -124,13 +129,20 @@
         const C = name.fatherName.length;
 
         return {
-          A: {label: "А", formula: `${A} * 100`, result: A * 100},
-          B: {label: "Б", formula: `1 / ${B}`, result: 1 / B},
+          Expected: {label: "А", formula: `${A} * 100`, result: A * 100},
+          VariationCoefficient: {label: "Б", formula: `1 / ${B}`, result: 1 / B},
           C: {label: "В", formula: `${A} - ${C} * 10`, result: A - C * 10},
           D: {label: "Г", formula: `3 + ${A}`, result: 3 + A},
           E: {label: "Д", formula: `1 + ${C} / ${B}`, result: 1 + C / B},
           F: {label: "Е", formula: `(${A} * ${B}) + ${C}`, result: (A * B) + C},
         }
+      },
+
+      coefficientsValues() {
+        return Object.fromEntries(
+          Object.entries(this.coefficients)
+            .map(([key, {result}]) => [key, result])
+        )
       },
 
       fullCoefficientsFormula() {
