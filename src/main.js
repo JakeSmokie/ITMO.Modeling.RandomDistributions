@@ -6,9 +6,10 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 
-import VueMathjax from 'vue-mathjax'
-Vue.use(VueMathjax);
+import VueKatex from 'vue-katex'
+import 'katex/dist/katex.min.css';
 
+Vue.use(VueKatex);
 Vue.config.productionTip = false;
 
 new Vue({
