@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid>
+  <b-container fluid class="mt-4">
     <b-card class="main mx-auto">
       <b-input-group prepend="Ваше ФИО">
         <b-form-input
@@ -9,7 +9,6 @@
           id="input-live"
           trim
           v-model="name"
-
         ></b-form-input>
         <b-form-invalid-feedback id="input-live-feedback">
           Введённая строка не является ФИО
@@ -38,7 +37,8 @@
             type="range"
             min="50"
             max="10000"
-            step="100"
+            step="50"
+            v-on:change="generateValues()"
           />
         </b-form-group>
       </b-card>
@@ -58,7 +58,7 @@
           </div>
           <b-card class="w-100">
             <katex>
-              V = {{ coefficientsValues.VariationCoefficient }} \\
+              V = {{ coefficientsValues.VariationCoefficient | truncateNumber }} \\
               M_{теор} = {{ coefficientsValues.Expected }} \\ \: \\
               \sigma_{теор} = {{ standardDerivation | truncateNumber }} \\
               D_{теор} = {{ variance | truncateNumber }} \\ \: \\
@@ -84,6 +84,7 @@
         </b-card>
 
         <b-button
+          v-if="false"
           block
           variant="outline-primary"
           class="mt-4"
@@ -97,7 +98,7 @@
     <div v-if="values.length > 0">
       <b-card class="main mx-auto mt-4">
         <katex>
-          M_{экс} =
+          M_{экс} = {{ actualExpectedValue | truncateNumber }}
         </katex>
       </b-card>
       <b-card class="text-left mt-4">
@@ -130,7 +131,7 @@
         values: [],
         formulasShown: true,
         debounce: debounce(x => this.name = x, 0),
-        step: 50,
+        step: 10,
 
         options: {
           responsive: true,
@@ -273,6 +274,12 @@
             }
           ]
         }
+      },
+
+      actualExpectedValue() {
+        return this.histogram
+          .map(([k, p]) => k * p)
+          .reduce((acc, x) => acc + x, 0);
       },
     },
 
