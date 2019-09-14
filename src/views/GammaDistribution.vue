@@ -67,7 +67,8 @@
                 \theta = {{ scale }} \\ \: \\
 
                 M_{теор} = {{ coefficientsValues.Expected }} \\
-                D_{теор} = {{ variance }} \\ \: \\
+                D_{теор} = {{ variance }} \\
+                \sigma_{теор} = {{ standardDerivation | truncate }} \\
               </katex>
             </b-card>
           </div>
@@ -82,6 +83,7 @@
               D = k * \theta^2 =
               {{ coefficientsValues.Shape }} * {{ scale | truncate }}^2 =
               {{ variance | truncate }} \\
+              \sigma = \sqrt{D} = {{ standardDerivation | truncate }}
             </katex>
           </b-card>
 
@@ -223,6 +225,10 @@
 
       variance() {
         return this.coefficientsValues.Shape * this.scale * this.scale;
+      },
+
+      standardDerivation() {
+        return Math.sqrt(this.variance);
       },
 
       fullCoefficientsFormula() {
