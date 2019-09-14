@@ -260,13 +260,13 @@
           labels: this.densityHistogram(step).map(([k]) => k),
           datasets: [{
             label: 'Actual density',
-            backgroundColor: 'rgba(248,121,121, 0.3)',
+            backgroundColor: 'rgba(0,220,24,0.3)',
             data: this.densityHistogram(step)
               .map(([, xs]) => xs)
               .map(x => x.toFixed(3))
           }, {
             label: 'Expected density',
-            backgroundColor: 'rgba(0,255,180,0.3)',
+            backgroundColor: 'rgba(92,95,90,0.3)',
             data: this.densityHistogram(step)
               .map(([k]) => k)
               .map(this.calcSectionLength(step))
@@ -283,12 +283,12 @@
           labels: this.densityHistogram(step).map(([k]) => k),
           datasets: [{
             label: 'Actual distribution',
-            backgroundColor: 'rgba(248,121,121, 0.3)',
+            backgroundColor: 'rgba(0,220,24,0.3)',
             data: this.calcDistribution(this.densityHistogram(step).map(([, density]) => density))
               .map(x => x.toFixed(4))
           }, {
             label: 'Expected distribution',
-            backgroundColor: 'rgba(0,255,180,0.3)',
+            backgroundColor: 'rgba(92,95,90,0.3)',
             data: this.calcDistribution(this.densityHistogram(step)
               .map(([k]) => k)
               .map(this.calcSectionLength(step))
@@ -306,11 +306,11 @@
           labels: histogram.map(([k]) => k),
           datasets: [{
             label: 'Actual count',
-            backgroundColor: 'rgba(248,121,121, 0.3)',
+            backgroundColor: 'rgba(0,220,24,0.3)',
             data: histogram.map(([, xs]) => xs)
           }, {
             label: 'Expected count',
-            backgroundColor: 'rgba(0,255,180,0.3)',
+            backgroundColor: 'rgba(92,95,90,0.3)',
             data: histogram
               .map(([k]) => k)
               .map(this.calcSectionLength(step))
