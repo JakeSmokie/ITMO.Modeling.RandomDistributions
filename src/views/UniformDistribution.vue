@@ -324,9 +324,12 @@
       },
 
       actualExpectedValue() {
-        return this.densityHistogram(this.step)
-          .map(([k, p]) => k * p)
-          .reduce((acc, x) => acc + x, 0);
+        return this.values
+          .reduce((acc, x, _, arr) => acc + (x / arr.length), 0);
+
+        // return this.densityHistogram(this.step)
+        //   .map(([k]) => k)
+        //   .reduce((acc, x, arr) => acc + x / arr.length, 0);
       },
 
       actualSquaredExpectedValue() {
