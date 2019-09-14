@@ -4,7 +4,7 @@
     class="p-4"
   >
     <div class="d-flex flex-row align-items-start">
-      <b-card class="main">
+      <b-card class="main text-center">
         <b-input-group prepend="Ваше ФИО">
           <b-form-input
             :state="nameState"
