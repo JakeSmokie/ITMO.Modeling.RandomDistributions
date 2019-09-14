@@ -34,4 +34,9 @@
   .w-fit-content {
     width: fit-content !important;
   }
+
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
 </style>
