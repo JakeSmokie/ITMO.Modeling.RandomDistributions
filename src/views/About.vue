@@ -50,19 +50,16 @@
         class="mt-4 text-monospace text-left text-nowrap"
       >
         <b-col>
-          <b-card class="h-100">
-            <math-jax>
+          <b-card>
+            <katex>
               Ф = {{ fullName.surname.length || 0 }} \\
               И = {{ fullName.name.length }} \\
-              О = {{ fullName.fatherName.length }}
-            </math-jax>
-          </b-card>
-        </b-col>
-        <b-col>
-          <b-card class="h-100">
-            <div v-for="{label, formula, result} in Object.values(coefficients)">
-              {{ label }} = {{ formula }} = {{ result }}
-            </div>
+              О = {{ fullName.fatherName.length }} \\
+
+              \:\\
+
+              {{ fullCoefficientsFormula }}
+            </katex>
           </b-card>
         </b-col>
       </b-row>
@@ -73,19 +70,18 @@
   </b-container>
 </template>
 <script>
-  import MathJax from "../components/MathJax";
   import {debounce} from '../utils';
+  import Katex from "../components/Katex";
 
   export default {
-    components: {MathJax},
-
+    components: {Katex},
     data() {
       return {
         inputName: '',
         name: '',
         numbersAmount: 500,
         formulasShown: true,
-        debounce: debounce(x => this.name = x, 500)
+        debounce: debounce(x => this.name = x, 0)
       }
     },
 
@@ -129,6 +125,12 @@
           F: {label: "Е", formula: `(${A} * ${B}) + ${C}`, result: (A * B) + C},
         }
       },
+
+      fullCoefficientsFormula() {
+        return Object.values(this.coefficients)
+          .map(({label, formula, result}) => `${label} = ${formula} = ${result}`)
+          .join('\\\\');
+      }
     },
 
     methods: {
