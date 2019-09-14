@@ -286,11 +286,10 @@
           }, {
             label: 'Expected distribution',
             backgroundColor: 'rgba(0,255,180,0.3)',
-            data: this.calcDistribution(
-              this.densityHistogram(step)
-                .map(([k]) => k)
-                .map(this.calcSectionLength(step))
-                .map(k => k / (2 * this.radius))
+            data: this.calcDistribution(this.densityHistogram(step)
+              .map(([k]) => k)
+              .map(this.calcSectionLength(step))
+              .map(k => k / (2 * this.radius))
             ).map(x => x.toFixed(3))
           }]
         }
@@ -313,6 +312,7 @@
               .map(([k]) => k)
               .map(this.calcSectionLength(step))
               .map(k => this.values.length * k / (2 * this.radius))
+              .map(x => x.toFixed(0))
           }]
         }
       },
