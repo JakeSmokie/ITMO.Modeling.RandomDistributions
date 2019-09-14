@@ -45,25 +45,23 @@
 
       <template v-if="coefficients">
         <div class="mt-4 d-flex flex-row">
-          <div class="mr-4 text-monospace text-left text-nowrap fit-content d-flex flex-row">
-            <b-card class="mr-4">
+          <div class="mr-4 text-nowrap text-left">
+            <b-card>
               <katex>
                 Ф = {{ fullName.surname.length || 0 }} \\
                 И = {{ fullName.name.length }} \\
-                О = {{ fullName.fatherName.length }} \\
-              </katex>
-            </b-card>
-            <b-card>
-              <katex>
+                О = {{ fullName.fatherName.length }} \\ \: \\
+
                 {{ fullCoefficientsFormula }}
               </katex>
             </b-card>
           </div>
           <b-card class="w-100">
             <katex>
-              M = {{ coefficientsValues.Expected }} \\
-              \sigma = {{ standardDerivation | truncateNumber }} \\
-              D = {{ variance | truncateNumber }} \\
+              V = {{ coefficientsValues.VariationCoefficient }} \\
+              M_{теор} = {{ coefficientsValues.Expected }} \\ \: \\
+              \sigma_{теор} = {{ standardDerivation | truncateNumber }} \\
+              D_{теор} = {{ variance | truncateNumber }} \\ \: \\
               l = {{ radius | truncateNumber }} \\
               a = {{ leftEdge | truncateNumber }} \\
               b = {{ rightEdge | truncateNumber }} \\
@@ -96,9 +94,12 @@
       </template>
     </b-card>
 
-    <div
-      v-if="values.length > 0"
-    >
+    <div v-if="values.length > 0">
+      <b-card class="main mx-auto mt-4">
+        <katex>
+          M_{экс} =
+        </katex>
+      </b-card>
       <b-card class="text-left mt-4">
         <line-chart
           :chartdata="densityChart"
@@ -133,7 +134,7 @@
 
         options: {
           responsive: true,
-          maintainAspectRatio: false
+          maintainAspectRatio: false,
         }
       }
     },
@@ -228,12 +229,12 @@
           datasets: [
             {
               label: 'Actual density',
-              backgroundColor: '#f87979',
+              backgroundColor: 'rgba(248,121,121, 0.3)',
               data: this.histogram.map(([, xs]) => xs)
             },
             {
               label: 'Expected density',
-              backgroundColor: '#FFFF00',
+              backgroundColor: 'rgba(0,255,180,0.3)',
               data: this.histogram.map(([k], i) => {
                 if (i === 0) {
                   return (k + this.step - this.leftEdge) / (2 * this.radius);
