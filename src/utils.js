@@ -17,8 +17,9 @@ export function debounce(f, interval) {
   };
 }
 
-export function truncateNumber(x) {
-  return Math.round(x * 100 + Number.EPSILON) / 100;
+export function truncateNumber(x, digits = 2) {
+  const pow = Math.pow(10, digits);
+  return Math.round(x * pow + Number.EPSILON) / pow;
 }
 
 Array.prototype.groupBy = function (f) {

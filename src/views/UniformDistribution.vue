@@ -62,13 +62,13 @@
           </div>
           <b-card class="w-100">
             <katex class="my-auto">
-              V = {{ coefficientsValues.VariationCoefficient | truncateNumber }} \\
+              V = {{ coefficientsValues.VariationCoefficient | truncate }} \\
               M_{теор} = {{ coefficientsValues.Expected }} \\ \: \\
-              \sigma_{теор} = {{ standardDerivation | truncateNumber }} \\
-              D_{теор} = {{ variance | truncateNumber }} \\ \: \\
-              l = {{ radius | truncateNumber }} \\
-              a = {{ leftEdge | truncateNumber }} \\
-              b = {{ rightEdge | truncateNumber }} \\
+              \sigma_{теор} = {{ standardDerivation | truncate }} \\
+              D_{теор} = {{ variance | truncate }} \\ \: \\
+              l = {{ radius | truncate }} \\
+              a = {{ leftEdge | truncate }} \\
+              b = {{ rightEdge | truncate }} \\
             </katex>
           </b-card>
         </div>
@@ -77,13 +77,13 @@
           <katex>
             V = \frac{\sigma}{\overline{x}} \qquad
             \sigma = V * \overline{x} = V * M =
-            {{ coefficientsValues.VariationCoefficient | truncateNumber }} * {{ coefficientsValues.Expected }} =
-            {{ standardDerivation | truncateNumber }} \\ \: \\
+            {{ coefficientsValues.VariationCoefficient | truncate }} * {{ coefficientsValues.Expected }} =
+            {{ standardDerivation | truncate }} \\ \: \\
 
-            D = \sigma^2 = {{ variance | truncateNumber }} \\ \: \\
+            D = \sigma^2 = {{ variance | truncate }} \\ \: \\
             D_{uniform} = \frac{1}{12}(b - a)^2 = \frac{1}{12}(M + l - (M - l))^2 = \frac{1}{3}l^2 \\ \: \\
-            \frac{1}{3}l^2 = {{ variance | truncateNumber }} \qquad
-            l = \sqrt{ {{ variance | truncateNumber }} * 3 } = \sqrt{ {{ variance * 3 | truncateNumber }} } = {{ radius | truncateNumber }}
+            \frac{1}{3}l^2 = {{ variance | truncate }} \qquad
+            l = \sqrt{ {{ variance | truncate }} * 3 } = \sqrt{ {{ variance * 3 | truncate }} } = {{ radius | truncate }}
           </katex>
         </b-card>
 
@@ -102,7 +102,11 @@
     <div v-if="values.length > 0">
       <b-card class="main mx-auto mt-4">
         <katex>
-          M_{экс} = {{ actualExpectedValue | truncateNumber }}
+          M_{экс} = \sum{x_i * p_i} = {{ actualExpectedValue | truncate }} \\
+          D_{экс} = M[x^2] - M^2[x] = {{ actualVariance | truncate }} \\
+          \sigma_{экс} = \sqrt{D_{экс}} = {{ actualDerivation | truncate }} \\
+          V_{экс} = \frac{\sigma_{экс}}{M_{экс}} = {{ actualVariationCoefficient }}
+
         </katex>
       </b-card>
       <b-card class="text-left mt-4">
@@ -146,6 +150,7 @@
 
     mounted() {
       this.name = 'Айгузин Иван Олегович';
+      this.generateValues();
     },
 
     computed: {
@@ -279,6 +284,24 @@
           .map(([k, p]) => k * p)
           .reduce((acc, x) => acc + x, 0);
       },
+
+      actualSquaredExpectedValue() {
+        return this.histogram
+          .map(([k, p]) => k * k * p)
+          .reduce((acc, x) => acc + x, 0);
+      },
+
+      actualVariance() {
+        return this.actualSquaredExpectedValue - this.actualExpectedValue * this.actualExpectedValue;
+      },
+
+      actualDerivation() {
+        return Math.sqrt(this.actualVariance);
+      },
+
+      actualVariationCoefficient() {
+        return this.actualDerivation / this.actualExpectedValue
+      }
     },
 
     methods: {
@@ -316,8 +339,8 @@
     },
 
     filters: {
-      truncateNumber(x) {
-        return truncateNumber(x);
+      truncate(x, digits = 2) {
+        return truncateNumber(x, digits);
       }
     }
   }
