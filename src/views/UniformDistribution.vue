@@ -1,5 +1,8 @@
 <template>
-  <b-container fluid class="mt-4">
+  <b-container
+    fluid
+    class="mt-4"
+  >
     <b-card class="main mx-auto">
       <b-input-group prepend="Ваше ФИО">
         <b-form-input
@@ -57,7 +60,7 @@
             </b-card>
           </div>
           <b-card class="w-100">
-            <katex>
+            <katex class="my-auto">
               V = {{ coefficientsValues.VariationCoefficient | truncateNumber }} \\
               M_{теор} = {{ coefficientsValues.Expected }} \\ \: \\
               \sigma_{теор} = {{ standardDerivation | truncateNumber }} \\
@@ -77,7 +80,7 @@
             {{ standardDerivation | truncateNumber }} \\ \: \\
 
             D = \sigma^2 = {{ variance | truncateNumber }} \\ \: \\
-            D = \frac{1}{12}(b - a)^2 = \frac{1}{12}(M + l - (M - l))^2 = \frac{1}{3}l^2 \\ \: \\
+            D_{uniform} = \frac{1}{12}(b - a)^2 = \frac{1}{12}(M + l - (M - l))^2 = \frac{1}{3}l^2 \\ \: \\
             \frac{1}{3}l^2 = {{ variance | truncateNumber }} \qquad
             l = \sqrt{ {{ variance | truncateNumber }} * 3 } = \sqrt{ {{ variance * 3 | truncateNumber }} } = {{ radius | truncateNumber }}
           </katex>
@@ -227,52 +230,46 @@
       densityChart() {
         return {
           labels: this.histogram.map(([k]) => k),
-          datasets: [
-            {
-              label: 'Actual density',
-              backgroundColor: 'rgba(248,121,121, 0.3)',
-              data: this.histogram.map(([, xs]) => xs)
-            },
-            {
-              label: 'Expected density',
-              backgroundColor: 'rgba(0,255,180,0.3)',
-              data: this.histogram.map(([k], i) => {
-                if (i === 0) {
-                  return (k + this.step - this.leftEdge) / (2 * this.radius);
-                }
+          datasets: [{
+            label: 'Actual density',
+            backgroundColor: 'rgba(248,121,121, 0.3)',
+            data: this.histogram.map(([, xs]) => xs)
+          }, {
+            label: 'Expected density',
+            backgroundColor: 'rgba(0,255,180,0.3)',
+            data: this.histogram.map(([k], i) => {
+              if (i === 0) {
+                return (k + this.step - this.leftEdge) / (2 * this.radius);
+              }
 
-                if (i === this.histogram.length - 1) {
-                  return (this.rightEdge - k) / (2 * this.radius);
-                }
+              if (i === this.histogram.length - 1) {
+                return (this.rightEdge - k) / (2 * this.radius);
+              }
 
-                return this.step / (2 * this.radius);
-              })
-            }
-          ]
+              return this.step / (2 * this.radius);
+            })
+          }]
         }
       },
 
       distributionChart() {
         return {
           labels: this.histogram.map(([k]) => k),
-          datasets: [
-            {
-              label: 'Actual distribution',
-              backgroundColor: 'rgba(248,121,121, 0.3)',
-              data: this.calcDistribution(this.histogram.map(([, density]) => density))
-                .map(x => x.toFixed(3))
-            },
-            {
-              label: 'Expected distribution',
-              backgroundColor: 'rgba(0,255,180,0.3)',
-              data: this.calcDistribution(
-                this.histogram
-                  .map(([k]) => k)
-                  .map(this.calcSectionLength)
-                  .map(k => k / (2 * this.radius))
-              ).map(x => x.toFixed(3))
-            }
-          ]
+          datasets: [{
+            label: 'Actual distribution',
+            backgroundColor: 'rgba(248,121,121, 0.3)',
+            data: this.calcDistribution(this.histogram.map(([, density]) => density))
+              .map(x => x.toFixed(3))
+          }, {
+            label: 'Expected distribution',
+            backgroundColor: 'rgba(0,255,180,0.3)',
+            data: this.calcDistribution(
+              this.histogram
+                .map(([k]) => k)
+                .map(this.calcSectionLength)
+                .map(k => k / (2 * this.radius))
+            ).map(x => x.toFixed(3))
+          }]
         }
       },
 
