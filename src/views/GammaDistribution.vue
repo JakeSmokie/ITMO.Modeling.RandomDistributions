@@ -160,6 +160,7 @@
         formulasShown: true,
         debounce: debounce(x => this.name = x, 0),
         step: 10,
+        midBigStep: 25,
         bigStep: 50,
         smallStep: 1,
         midStep: 5,
@@ -256,7 +257,7 @@
       },
 
       densityChart() {
-        const step = this.step;
+        const step = this.midBigStep;
 
         return {
           labels: this.densityHistogram(step).map(([k]) => k),
