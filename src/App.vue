@@ -1,16 +1,25 @@
 <template>
   <div class="d-flex flex-row align-items-stretch">
     <div class="text-nowrap bg-light border-right shadow-sm min-vh-100">
-      <div class="border-bottom p-2 pl-4 font-weight-bold" style="font-size: 20px">
+      <div
+        class="border-bottom p-2 pl-4 font-weight-bold"
+        style="font-size: 20px"
+      >
         📗 Моделирование
       </div>
-      <b-nav vertical class="p-2">
+      <b-nav
+        vertical
+        class="p-2"
+      >
         <b-nav-item to="/">Равномерное распределение</b-nav-item>
-        <b-nav-item to="/gamma">Распределение Эрланга</b-nav-item>
+        <b-nav-item class="mt-n2" to="/gamma">Распределение Эрланга</b-nav-item>
       </b-nav>
     </div>
 
-    <b-container fluid class="px-0">
+    <b-container
+      fluid
+      class="px-0"
+    >
       <router-view/>
     </b-container>
   </div>
