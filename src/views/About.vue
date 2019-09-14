@@ -269,6 +269,7 @@
               label: 'Actual distribution',
               backgroundColor: '#f87979',
               data: this.calcDistribution(this.histogram.map(([, density]) => density))
+                .map(x => x.toFixed(3))
             },
             {
               label: 'Expected distribution',
@@ -278,7 +279,7 @@
                   .map(([k]) => k)
                   .map(this.calcSectionLength)
                   .map(k => k / (2 * this.radius))
-              )
+              ).map(x => x.toFixed(3))
             }
           ]
         }
