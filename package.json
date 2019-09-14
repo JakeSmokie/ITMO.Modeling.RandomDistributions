@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@stdlib/stdlib": "0.0.85",
     "bootstrap-vue": "^2.0.0-rc.19",
     "chart.js": "^2.8.0",
     "core-js": "^2.6.5",

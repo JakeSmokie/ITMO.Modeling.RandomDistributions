@@ -68,8 +68,6 @@
 
                 M_{теор} = {{ coefficientsValues.Expected }} \\
                 D_{теор} = {{ variance }} \\ \: \\
-
-                
               </katex>
             </b-card>
           </div>
@@ -144,9 +142,9 @@
 <script>
   import {debounce, roundBy, sleep, truncateNumber} from '../utils';
   import Katex from "../components/Katex";
-  import {MersenneTwister19937, real} from "random-js";
   import LineChart from "../components/LineChart.js";
   import BarChart from "../components/BarChart";
+  import * as stdlib from '@stdlib/stdlib';
 
   export default {
     components: {BarChart, LineChart, Katex},
@@ -357,9 +355,12 @@
         this.values = [];
         await sleep(0);
 
-        const random = () => 0;
+        const random = stdlib.random.iterators.erlang(this.coefficientsValues.Shape, 1 / this.scale, {
+          seed: this.coefficientsValues.Seed
+        });
 
-        this.values = [...Array(Number(this.valuesCount)).keys()].map(random);
+        this.values = [...Array(Number(this.valuesCount)).keys()].map(() => random.next().value);
+        console.log(this.values);
       },
 
       calcDistribution(densities) {
