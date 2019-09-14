@@ -268,22 +268,17 @@
             {
               label: 'Actual distribution',
               backgroundColor: '#f87979',
-              data: this.calcDistribution(this.histogram.map(([, xs]) => xs))
+              data: this.calcDistribution(this.histogram.map(([, density]) => density))
             },
             {
               label: 'Expected distribution',
               backgroundColor: '#FFFF00',
-              data: this.calcDistribution(this.histogram.map(([k], i) => {
-                if (i === 0) {
-                  return (k + this.step - this.leftEdge) / (2 * this.radius);
-                }
-
-                if (i === this.histogram.length - 1) {
-                  return (this.rightEdge - k) / (2 * this.radius);
-                }
-
-                return this.step / (2 * this.radius);
-              }))
+              data: this.calcDistribution(
+                this.histogram
+                  .map(([k]) => k)
+                  .map(this.calcSectionLength)
+                  .map(k => k / (2 * this.radius))
+              )
             }
           ]
         }
@@ -301,14 +296,26 @@
         this.values = [...Array(Number(this.valuesCount)).keys()].map(random);
       },
 
-      calcDistribution(xs) {
-        return xs.reduce((acc, xs) => {
+      calcDistribution(densities) {
+        return densities.reduce((acc, density) => {
           if (acc) {
-            acc.push(xs + acc[acc.length - 1]);
+            acc.push(density + acc[acc.length - 1]);
           }
 
-          return acc || [xs];
+          return acc || [density];
         }, null)
+      },
+
+      calcSectionLength(k, i, arr) {
+        if (i === 0) {
+          return k + this.step - this.leftEdge;
+        }
+
+        if (i === arr.length - 1) {
+          return this.rightEdge - k;
+        }
+
+        return this.step;
       }
     },
 
