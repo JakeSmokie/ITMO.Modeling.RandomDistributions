@@ -65,26 +65,17 @@
               <katex class="my-auto text-center">
                 V = {{ coefficientsValues.VariationCoefficient | truncate }} \\
                 M_{теор} = {{ coefficientsValues.Expected }} \\ \: \\
-                \sigma_{теор} = {{ standardDerivation | truncate }} \\
-                D_{теор} = {{ variance | truncate }} \\ \: \\
-                l = {{ radius | truncate }} \\
-                a = {{ leftEdge | truncate }} \\
-                b = {{ rightEdge | truncate }} \\
+
+                \theta = {{ shape }}
               </katex>
             </b-card>
           </div>
 
           <b-card class="mt-4">
             <katex>
-              V = \frac{\sigma}{\overline{x}} \qquad
-              \sigma = V * \overline{x} = V * M =
-              {{ coefficientsValues.VariationCoefficient | truncate }} * {{ coefficientsValues.Expected }} =
-              {{ standardDerivation | truncate }} \\ \: \\
-
-              D = \sigma^2 = {{ variance | truncate }} \\ \: \\
-              D_{uniform} = \frac{1}{12}(b - a)^2 = \frac{1}{12}(M + l - (M - l))^2 = \frac{1}{3}l^2 \\ \: \\
-              \frac{1}{3}l^2 = {{ variance | truncate }} \qquad
-              l = \sqrt{ {{ variance | truncate }} * 3 } = \sqrt{ {{ variance * 3 | truncate }} } = {{ radius | truncate }}
+              M = k * \theta \qquad \theta = \frac{M}{k} =
+              \frac{ {{ coefficientsValues.Expected }} }{ {{ coefficientsValues.K }} } =
+              {{ shape | truncate }} \\
             </katex>
           </b-card>
 
@@ -208,7 +199,7 @@
           Expected: {label: "А", formula: `${A} * 100`, result: A * 100},
           VariationCoefficient: {label: "Б", formula: `1 / ${B}`, result: 1 / B},
           C: {label: "В", formula: `${A} - ${C} * 10`, result: A - C * 10},
-          D: {label: "Г", formula: `3 + ${A}`, result: 3 + A},
+          K: {label: "Г", formula: `3 + ${A}`, result: 3 + A},
           E: {label: "Д", formula: `1 + ${C} / ${B}`, result: 1 + C / B},
           Seed: {label: "Е", formula: `(${A} * ${B}) + ${C}`, result: (A * B) + C},
         }
@@ -221,24 +212,8 @@
         )
       },
 
-      standardDerivation() {
-        return this.coefficientsValues.VariationCoefficient * this.coefficientsValues.Expected;
-      },
-
-      variance() {
-        return this.standardDerivation * this.standardDerivation
-      },
-
-      radius() {
-        return Math.sqrt(this.variance * 3);
-      },
-
-      leftEdge() {
-        return this.coefficientsValues.Expected - this.radius;
-      },
-
-      rightEdge() {
-        return this.coefficientsValues.Expected + this.radius;
+      shape() {
+        return this.coefficientsValues.Expected / this.coefficientsValues.K;
       },
 
       fullCoefficientsFormula() {
@@ -373,8 +348,7 @@
         this.values = [];
         await sleep(0);
 
-        const mt = MersenneTwister19937.seed(this.coefficientsValues.Seed);
-        const random = () => real(this.leftEdge, this.rightEdge, true)(mt);
+        const random = () => 0;
 
         this.values = [...Array(Number(this.valuesCount)).keys()].map(random);
       },

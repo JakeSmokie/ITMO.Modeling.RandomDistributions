@@ -207,9 +207,6 @@
         return {
           Expected: {label: "А", formula: `${A} * 100`, result: A * 100},
           VariationCoefficient: {label: "Б", formula: `1 / ${B}`, result: 1 / B},
-          C: {label: "В", formula: `${A} - ${C} * 10`, result: A - C * 10},
-          D: {label: "Г", formula: `3 + ${A}`, result: 3 + A},
-          E: {label: "Д", formula: `1 + ${C} / ${B}`, result: 1 + C / B},
           Seed: {label: "Е", formula: `(${A} * ${B}) + ${C}`, result: (A * B) + C},
         }
       },
