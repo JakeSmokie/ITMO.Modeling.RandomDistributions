@@ -344,7 +344,7 @@
       },
 
       actualVariationCoefficient() {
-        return this.actualDerivation / this.actualExpectedValue
+        return this.actualDerivation / this.actualAverage;
       },
 
       expectedValueError() {
