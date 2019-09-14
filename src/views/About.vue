@@ -4,21 +4,22 @@
     class="main"
   >
     <b-card>
-      <b-input-group prepend="Ваше ФИО">
-        <b-form-input
-          :state="nameState"
-          aria-describedby="input-live-help input-live-feedback"
-          autofocus
-          id="input-live"
-          trim
-          v-model="inputName"
-          v-on:update="renderFormulas()"
-        ></b-form-input>
-
-        <b-form-invalid-feedback id="input-live-feedback">
-          Введённая строка не является ФИО
-        </b-form-invalid-feedback>
-      </b-input-group>
+      <b-form-group
+        :state="nameState"
+        invalid-feedback="Введённая строка не является ФИО"
+      >
+        <b-input-group prepend="Ваше ФИО">
+          <b-form-input
+            aria-describedby="input-live-help input-live-feedback"
+            autofocus
+            id="input-live"
+            trim
+            v-model="inputName"
+            v-on:update="renderFormulas()"
+            :state="nameState"
+          ></b-form-input>
+        </b-input-group>
+      </b-form-group>
 
       <b-card
         no-body
