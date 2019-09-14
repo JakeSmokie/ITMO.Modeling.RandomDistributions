@@ -100,12 +100,18 @@
     </b-card>
 
     <div v-if="values.length > 0">
-      <b-card class="main mx-auto mt-4">
+      <b-card class="main mx-auto mt-4 text-left">
         <katex>
           M_{экс} = \sum{x_i * p_i} = {{ actualExpectedValue | truncate }} \\
           D_{экс} = M[x^2] - M^2[x] = {{ actualVariance | truncate }} \\
           \sigma_{экс} = \sqrt{D_{экс}} = {{ actualDerivation | truncate }} \\
-          V_{экс} = \frac{\sigma_{экс}}{M_{экс}} = {{ actualVariationCoefficient }}
+          V_{экс} = \frac{\sigma_{экс}}{M_{экс}} = {{ actualVariationCoefficient | truncate(4)}} \\ \: \\
+
+          \omega_M = \frac{M_{экс} - M_{теор}}{M_{теор}} = {{ expectedValueError * 100 | truncate(4)}} \% \\
+          \omega_D = \frac{D_{экс} - D_{теор}}{D_{теор}} = {{ varianceError * 100 | truncate(4)}} \% \\
+          \omega_\sigma = \frac{\sigma_{экс} - \sigma_{теор}}{\sigma_{теор}}
+          = {{ derivationError * 100 | truncate(4)}} \% \\
+          \omega_V = \frac{V_{экс} - V_{теор}}{V_{теор}} = {{ variationCoefficientError * 100 | truncate(4)}} \% \\
 
         </katex>
       </b-card>
@@ -301,7 +307,24 @@
 
       actualVariationCoefficient() {
         return this.actualDerivation / this.actualExpectedValue
+      },
+
+      expectedValueError() {
+        return Math.abs(this.actualExpectedValue - this.coefficientsValues.Expected) / this.coefficientsValues.Expected
+      },
+
+      varianceError() {
+        return Math.abs(this.actualVariance - this.variance) / this.variance
+      },
+
+      derivationError() {
+        return Math.abs(this.actualDerivation - this.standardDerivation) / this.standardDerivation
+      },
+
+      variationCoefficientError() {
+        return Math.abs(this.actualVariationCoefficient - this.coefficientsValues.VariationCoefficient) / this.coefficientsValues.VariationCoefficient
       }
+
     },
 
     methods: {
