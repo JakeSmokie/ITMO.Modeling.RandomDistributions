@@ -4,7 +4,7 @@
     class="p-4"
   >
     <div class="d-flex flex-row align-items-start">
-      <b-card class="main text-center">
+      <div class="main text-center">
         <b-input-group prepend="Ваше ФИО">
           <b-form-input
             :state="nameState"
@@ -98,7 +98,7 @@
             Сгенерировать значения
           </b-button>
         </template>
-      </b-card>
+      </div>
       <b-card
         v-if="values.length > 0"
         class="main ml-4 text-left"
