@@ -262,20 +262,21 @@
 
         return {
           labels: this.densityHistogram(step).map(([k]) => k),
-          datasets: [{
+          datasets: [
+              {
             label: 'Actual density',
             backgroundColor: 'rgba(0,220,24,0.3)',
             data: this.densityHistogram(step)
-              .map(([, xs]) => xs)
-              .map(x => x.toFixed(5))
+              .map(([, xs]) => xs / step)
+              .map(x => x.toFixed(10))
           }, {
             label: 'Expected density',
             backgroundColor: 'rgba(92,95,90,0.3)',
             data: this.densityHistogram(step)
               .map(([k]) => k)
               .map(this.calcSectionLength(step))
-              .map(k => k / (2 * this.radius * step))
-              .map(x => x.toFixed(5))
+              .map(k => k / (2 * this.radius))
+              .map(x => x.toFixed(10))
           }]
         }
       },
@@ -388,14 +389,14 @@
       calcSectionLength(step) {
         return (k, i, arr) => {
           if (i === 0) {
-            return k + step - this.leftEdge;
+            return (k + step - this.leftEdge) / step;
           }
 
           if (i === arr.length - 1) {
-            return this.rightEdge - k;
+            return (this.rightEdge - k) / step;
           }
 
-          return step;
+          return 1;
         }
       }
     },
