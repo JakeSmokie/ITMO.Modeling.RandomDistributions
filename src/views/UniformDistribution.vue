@@ -4,7 +4,7 @@
     class="p-4"
   >
     <div class="d-flex flex-row align-items-start">
-      <b-card class="main text-center">
+      <div class="main text-center">
         <b-input-group prepend="Ваше ФИО">
           <b-form-input
             :state="nameState"
@@ -98,7 +98,7 @@
             Сгенерировать значения
           </b-button>
         </template>
-      </b-card>
+      </div>
       <b-card
         v-if="values.length > 0"
         class="main ml-4 text-left"
@@ -248,7 +248,7 @@
       densityHistogram() {
         return step => this.values
           .groupBy(x => roundBy(x, step))
-          .map(([k, xs]) => [Number(k), xs.length / this.values.length]);
+          .map(([k, xs]) => [Number(k), xs.length / this.values.length / step]);
       },
 
       countHistogram() {
@@ -267,16 +267,15 @@
             label: 'Actual density',
             backgroundColor: 'rgba(0,220,24,0.3)',
             data: this.densityHistogram(step)
-              .map(([, xs]) => xs)
-              .map(x => (x / step).toFixed(10))
-          },
-              {
+              .map(([, xs]) => xs / step)
+              .map(x => x.toFixed(10))
+          }, {
             label: 'Expected density',
             backgroundColor: 'rgba(92,95,90,0.3)',
             data: this.densityHistogram(step)
               .map(([k]) => k)
               .map(this.calcSectionLength(step))
-              .map(k => k  / (2 * this.radius))
+              .map(k => k / (2 * this.radius))
               .map(x => x.toFixed(10))
           }]
         }
