@@ -32,3 +32,7 @@ Array.prototype.groupBy = function (f) {
 export function roundBy(x, n) {
   return Math.floor(x / n) * n;
 }
+
+export function factorial(n) {
+  return n ? n * factorial(n - 1) : 1;
+}

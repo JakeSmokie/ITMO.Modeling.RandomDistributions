@@ -144,7 +144,7 @@
   </b-container>
 </template>
 <script>
-  import {debounce, roundBy, sleep, truncateNumber} from '../utils';
+  import {debounce, roundBy, sleep, truncateNumber, factorial} from '../utils';
   import Katex from "../components/Katex";
   import LineChart from "../components/LineChart.js";
   import BarChart from "../components/BarChart";
@@ -266,21 +266,27 @@
             backgroundColor: 'rgba(0,220,24,0.3)',
             data: this.densityHistogram(step)
               .map(([, xs]) => xs)
-              .map(x => x.toFixed(3))
+              .map(x => (x / step).toFixed(10))
           }, {
             label: 'Expected density',
             backgroundColor: 'rgba(92,95,90,0.3)',
             data: this.densityHistogram(step)
               .map(([k]) => k)
-              .map(this.calcSectionLength(step))
-              .map(k => k / (2 * this.radius))
-              .map(x => x.toFixed(3))
+              .map(
+                k =>
+                  (Math.pow(k, this.coefficientsValues.Shape - 1) *
+                    Math.exp(-k / this.scale)) /
+                  Math.pow(this.scale, this.coefficientsValues.Shape) /
+                  factorial(this.coefficientsValues.Shape - 1)
+              )
+              .map(x => x.toFixed(10))
           }]
         }
       },
 
       distributionChart() {
         const step = this.midStep;
+        console.log([...Array(5).keys()].map(x => x + 1).reduce((acc, x) => acc + x, 0));
 
         return {
           labels: this.densityHistogram(step).map(([k]) => k),
@@ -292,11 +298,17 @@
           }, {
             label: 'Expected distribution',
             backgroundColor: 'rgba(92,95,90,0.3)',
-            data: this.calcDistribution(this.densityHistogram(step)
-              .map(([k]) => k)
-              .map(this.calcSectionLength(step))
-              .map(k => k / (2 * this.radius))
-            ).map(x => x.toFixed(4))
+            // data: this.calcDistribution(this.densityHistogram(step)
+            //   .map(([k]) => k)
+            //   .map(this.calcSectionLength(step))
+            //   .map(k => k / (2 * this.radius))
+            // ).map(x => x.toFixed(4))
+              data: this.densityHistogram(step)
+                  .map(([k]) => k)
+                  .map(k => 1 - [...Array(this.coefficientsValues.Shape - 1).keys()]
+                      .map(i => Math.pow(k / this.scale, i) / factorial(i) * Math.exp(-k / this.scale))
+                      .reduce((acc, x) => acc + x, 0))
+                  .map(k => k.toFixed(4))
           }]
         }
       },
@@ -327,7 +339,7 @@
         return this.densityHistogram(this.smallStep)
           .map(([k, p]) => k * p)
           .reduce((acc, x) => acc + x, 0);
-      },
+        },
 
       actualAverage() {
         return this.values
@@ -395,14 +407,6 @@
 
       calcSectionLength(step) {
         return (k, i, arr) => {
-          if (i === 0) {
-            return k + step - this.leftEdge;
-          }
-
-          if (i === arr.length - 1) {
-            return this.rightEdge - k;
-          }
-
           return step;
         }
       }
