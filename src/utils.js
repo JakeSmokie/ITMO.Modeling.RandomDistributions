@@ -36,3 +36,9 @@ export function roundBy(x, n) {
 export function factorial(n) {
   return n ? n * factorial(n - 1) : 1;
 }
+
+export function clamp(x, a, b) {
+  return x < a
+    ? a
+    : (x > b ? b : x);
+}
