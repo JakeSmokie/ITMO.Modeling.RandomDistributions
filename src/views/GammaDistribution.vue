@@ -159,9 +159,6 @@
         values: [],
         formulasShown: true,
         debounce: debounce(x => this.name = x, 0),
-        step: 10,
-        midBigStep: 25,
-        bigStep: 50,
         smallStep: 1,
         midStep: 5,
 
@@ -247,37 +244,56 @@
       densityHistogram() {
         return step => this.values
           .groupBy(x => roundBy(x, step))
-          .map(([k, xs]) => [Number(k), xs.length / this.values.length]);
+          .map(([k, xs]) => [Number(k), xs.length / this.values.length])
+          .sort(([a], [b]) => a - b);
       },
 
       countHistogram() {
         return step => this.values
           .groupBy(x => roundBy(x, step))
-          .map(([k, xs]) => [Number(k), xs.length]);
+          .map(([k, xs]) => [Number(k), xs.length])
+          .sort(([a], [b]) => a - b);
+      },
+
+      radius() {
+        return this.values.reduce((acc, x) => x > acc ? x : acc);
+      },
+
+      step() {
+        return this.radius / 25;
+      },
+
+      bigStep() {
+        return this.step * 5;
+      },
+
+      midBigStep() {
+        return this.radius / 10;
       },
 
       densityChart() {
-        const step = this.midBigStep;
+        const step = this.step;
+        const histogram = this.densityHistogram(step);
 
+        const gamma = factorial(this.coefficientsValues.Shape - 1);
         return {
-          labels: this.densityHistogram(step).map(([k]) => k),
+          labels: histogram.map(([k]) => k.toFixed(0)),
           datasets: [{
             label: 'Actual density',
             backgroundColor: 'rgba(0,220,24,0.3)',
-            data: this.densityHistogram(step)
+            data: histogram
               .map(([, xs]) => xs)
               .map(x => (x / step).toFixed(10))
           }, {
             label: 'Expected density',
             backgroundColor: 'rgba(92,95,90,0.3)',
-            data: this.densityHistogram(step)
+            data: histogram
               .map(([k]) => k)
               .map(
                 k =>
-                  (Math.pow(k, this.coefficientsValues.Shape - 1) *
-                    Math.exp(-k / this.scale)) /
+                  (Math.pow(k, this.coefficientsValues.Shape - 1) * Math.exp(-k / this.scale)) /
                   Math.pow(this.scale, this.coefficientsValues.Shape) /
-                  factorial(this.coefficientsValues.Shape - 1)
+                  gamma
               )
               .map(x => x.toFixed(10))
           }]
@@ -309,7 +325,7 @@
       },
 
       countChart() {
-        const step = this.bigStep;
+        const step = this.step;
         const histogram = this.countHistogram(step);
 
         return {
