@@ -217,7 +217,7 @@
 
       coefficientsValues() {
         return Object.fromEntries(
-          Object.entries(this.coefficients)
+          Object.entries(this.coefficients || {})
             .map(([key, {result}]) => [key, result])
         )
       },
@@ -386,6 +386,10 @@
       async generateValues() {
         this.values = [];
         await sleep(0);
+
+        if (!this.coefficients) {
+          return;
+        }
 
         const random = stdlib.random.iterators.erlang(this.coefficientsValues.Shape, 1 / this.scale, {
           seed: this.coefficientsValues.Seed
