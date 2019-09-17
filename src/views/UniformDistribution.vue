@@ -84,7 +84,8 @@
               D = \sigma^2 = {{ variance | truncate }} \\ \: \\
               D_{uniform} = \frac{1}{12}(b - a)^2 = \frac{1}{12}(M + l - (M - l))^2 = \frac{1}{3}l^2 \\ \: \\
               \frac{1}{3}l^2 = {{ variance | truncate }} \qquad
-              l = \sqrt{ {{ variance | truncate }} * 3 } = \sqrt{ {{ variance * 3 | truncate }} } = {{ radius | truncate }}
+              l = \sqrt{ {{ variance | truncate }} * 3 } = \sqrt{ {{ variance * 3 | truncate }} } = {{ radius | truncate
+              }}
             </katex>
           </b-card>
 
@@ -143,270 +144,287 @@
   </b-container>
 </template>
 <script>
-  import {debounce, roundBy, sleep, truncateNumber} from '../utils';
-  import Katex from "../components/Katex";
-  import {MersenneTwister19937, real} from "random-js";
-  import LineChart from "../components/LineChart.js";
-  import BarChart from "../components/BarChart";
+    import {debounce, roundBy, sleep, truncateNumber} from '../utils';
+    import Katex from "../components/Katex";
+    import {MersenneTwister19937, real} from "random-js";
+    import LineChart from "../components/LineChart.js";
+    import BarChart from "../components/BarChart";
 
-  export default {
-    components: {BarChart, LineChart, Katex},
-    data() {
-      return {
-        name: '',
-        valuesCount: 500,
-        values: [],
-        formulasShown: true,
-        debounce: debounce(x => this.name = x, 0),
-        step: 10,
-        bigStep: 50,
-        smallStep: 1,
+    export default {
+        components: {BarChart, LineChart, Katex},
+        data() {
+            return {
+                name: '',
+                valuesCount: 500,
+                values: [],
+                formulasShown: true,
+                debounce: debounce(x => this.name = x, 0),
+                //step: 10,
+                //bigStep: 50,
+                smallStep: 1,
 
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                }
+            }
+        },
+
+        mounted() {
+            this.name = 'Масалкин Савелий Евгеньевич';
+            this.generateValues();
+        },
+
+        computed: {
+            step() {
+              return (this.radius / 25).toFixed(0);
+            },
+
+            bigStep() {
+              return this.step * 5;
+            },
+
+            midBigStep() {
+              return (this.bigStep / 2).toFixed(0);
+            },
+
+            nameState() {
+                const length = this.name.split(' ').length;
+                return length === 2 || length === 3;
+            },
+
+            fullName() {
+                const full = this.name.split(' ');
+
+                if (full.length < 2) {
+                    return null;
+                }
+
+                return {
+                    surname: full[0],
+                    name: full[1],
+                    fatherName: full[2] || full[1]
+                }
+            },
+
+            coefficients() {
+                const name = this.fullName;
+
+                if (name === null) {
+                    return null
+                }
+
+                const A = name.surname.length;
+                const B = name.name.length;
+                const C = name.fatherName.length;
+
+                return {
+                    Expected: {label: "А", formula: `${A} * 100`, result: A * 100},
+                    VariationCoefficient: {label: "Б", formula: `1 / ${B}`, result: 1 / B},
+                    Seed: {label: "Е", formula: `(${A} * ${B}) + ${C}`, result: (A * B) + C},
+                }
+            },
+
+            coefficientsValues() {
+                return Object.fromEntries(
+                    Object.entries(this.coefficients)
+                        .map(([key, {result}]) => [key, result])
+                )
+            },
+
+            standardDerivation() {
+                return this.coefficientsValues.VariationCoefficient * this.coefficientsValues.Expected;
+            },
+
+            variance() {
+                return this.standardDerivation * this.standardDerivation
+            },
+
+            radius() {
+                return Math.sqrt(this.variance * 3);
+            },
+
+            leftEdge() {
+                return this.coefficientsValues.Expected - this.radius;
+            },
+
+            rightEdge() {
+                return this.coefficientsValues.Expected + this.radius;
+            },
+
+            fullCoefficientsFormula() {
+                return Object.values(this.coefficients)
+                    .map(({label, formula, result}) => `${label} = ${formula} = ${truncateNumber(result)}`)
+                    .join('\\\\');
+            },
+
+            densityHistogram() {
+                return step => this.values
+                    .groupBy(x => roundBy(x, step))
+                    .map(([k, xs]) => [Number(k), xs.length / this.values.length / step]);
+            },
+
+            countHistogram() {
+                return step => this.values
+                    .groupBy(x => roundBy(x, step))
+                    .map(([k, xs]) => [Number(k), xs.length]);
+            },
+
+            densityChart() {
+                const step = this.step;
+                // console.log(step);
+                // console.log(this.densityHistogram(step)
+                //     .map(([k]) => k)
+                //     .map(this.calcSectionLength(step)));
+
+                return {
+                    labels: this.densityHistogram(step).map(([k]) => k),
+                    datasets: [
+                        {
+                            label: 'Actual density',
+                            backgroundColor: 'rgba(0,220,24,0.3)',
+                            data: this.densityHistogram(step)
+                                .map(([, xs]) => xs/ step)
+                                .map(x => x.toFixed(10))
+
+                       }, {
+                            label: 'Expected density',
+                            backgroundColor: 'rgba(92,95,90,0.3)',
+                            data: this.densityHistogram(step)
+                                .map(([k]) => k)
+                                .map(this.calcSectionLength(step))
+                                .map(k => k / (2 * this.radius))
+                                .map(x => x.toFixed(10))
+                        }]
+                }
+            },
+
+            distributionChart() {
+                const step = this.smallStep;
+
+                return {
+                    labels: this.densityHistogram(step).map(([k]) => k),
+                    datasets: [{
+                        label: 'Actual distribution',
+                        backgroundColor: 'rgba(0,220,24,0.3)',
+                        data: this.calcDistribution(this.densityHistogram(step).map(([, density]) => density))
+                            .map(x => x.toFixed(4))
+                    }, {
+                        label: 'Expected distribution',
+                        backgroundColor: 'rgba(92,95,90,0.3)',
+                        data: this.densityHistogram(step)
+                            .map((_, i, arr) => i / arr.length)
+                            .map(x => x.toFixed(4))
+                    }]
+                }
+            },
+
+            countChart() {
+                const step = this.midBigStep;
+                const histogram = this.countHistogram(step);
+
+                return {
+                    labels: histogram.map(([k]) => k),
+                    datasets: [{
+                        label: 'Actual count',
+                        backgroundColor: 'rgba(0,220,24,0.3)',
+                        data: histogram.map(([, xs]) => xs)
+                    }, {
+                        label: 'Expected count',
+                        backgroundColor: 'rgba(92,95,90,0.3)',
+                        data: histogram
+                            .map(([k]) => k)
+                            .map(this.calcSectionLength(step))
+                            .map(k => this.values.length * k * step / (2 * this.radius))
+                            .map(x => x.toFixed(0))
+                    }]
+                }
+            },
+
+            actualExpectedValue() {
+                return this.densityHistogram(this.smallStep)
+                    .map(([k, p]) => k * p)
+                    .reduce((acc, x) => acc + x, 0);
+            },
+
+            actualSquaredExpectedValue() {
+                return this.densityHistogram(this.smallStep)
+                    .map(([k, p]) => k * k * p)
+                    .reduce((acc, x) => acc + x, 0);
+            },
+
+            actualVariance() {
+                return this.actualSquaredExpectedValue - this.actualExpectedValue * this.actualExpectedValue;
+            },
+
+            actualDerivation() {
+                return Math.sqrt(this.actualVariance);
+            },
+
+            actualVariationCoefficient() {
+                return this.actualDerivation / this.actualExpectedValue
+            },
+
+            expectedValueError() {
+                return Math.abs(this.actualExpectedValue - this.coefficientsValues.Expected) / this.coefficientsValues.Expected
+            },
+
+            varianceError() {
+                return Math.abs(this.actualVariance - this.variance) / this.variance
+            },
+
+            derivationError() {
+                return Math.abs(this.actualDerivation - this.standardDerivation) / this.standardDerivation
+            },
+
+            variationCoefficientError() {
+                return Math.abs(this.actualVariationCoefficient - this.coefficientsValues.VariationCoefficient) / this.coefficientsValues.VariationCoefficient
+            }
+
+        },
+
+        methods: {
+            async generateValues() {
+                this.values = [];
+                await sleep(0);
+
+                const mt = MersenneTwister19937.seed(this.coefficientsValues.Seed);
+                const random = () => real(this.leftEdge, this.rightEdge, true)(mt);
+
+                this.values = [...Array(Number(this.valuesCount)).keys()].map(random);
+            },
+
+            calcDistribution(densities) {
+                return densities.reduce((acc, density) => {
+                    if (acc) {
+                        acc.push(density + acc[acc.length - 1]);
+                    }
+
+                    return acc || [density];
+                }, null)
+            },
+
+            calcSectionLength(step) {
+                return (k, i, arr) => {
+                    if (i === 0) {
+                        return (k + parseInt(step) - this.leftEdge) / parseInt(step);
+                    }
+
+                    if (i === arr.length - 1) {
+                        return (this.rightEdge - k) / parseInt(step);
+                    }
+
+                    return 1;
+                }
+            }
+        },
+
+        filters: {
+            truncate(x, digits = 2) {
+                return truncateNumber(x, digits);
+            }
         }
-      }
-    },
-
-    mounted() {
-      this.name = 'Айгузин Иван Олегович';
-      this.generateValues();
-    },
-
-    computed: {
-      nameState() {
-        const length = this.name.split(' ').length;
-        return length === 2 || length === 3;
-      },
-
-      fullName() {
-        const full = this.name.split(' ');
-
-        if (full.length < 2) {
-          return null;
-        }
-
-        return {
-          surname: full[0],
-          name: full[1],
-          fatherName: full[2] || full[1]
-        }
-      },
-
-      coefficients() {
-        const name = this.fullName;
-
-        if (name === null) {
-          return null
-        }
-
-        const A = name.surname.length;
-        const B = name.name.length;
-        const C = name.fatherName.length;
-
-        return {
-          Expected: {label: "А", formula: `${A} * 100`, result: A * 100},
-          VariationCoefficient: {label: "Б", formula: `1 / ${B}`, result: 1 / B},
-          Seed: {label: "Е", formula: `(${A} * ${B}) + ${C}`, result: (A * B) + C},
-        }
-      },
-
-      coefficientsValues() {
-        return Object.fromEntries(
-          Object.entries(this.coefficients)
-            .map(([key, {result}]) => [key, result])
-        )
-      },
-
-      standardDerivation() {
-        return this.coefficientsValues.VariationCoefficient * this.coefficientsValues.Expected;
-      },
-
-      variance() {
-        return this.standardDerivation * this.standardDerivation
-      },
-
-      radius() {
-        return Math.sqrt(this.variance * 3);
-      },
-
-      leftEdge() {
-        return this.coefficientsValues.Expected - this.radius;
-      },
-
-      rightEdge() {
-        return this.coefficientsValues.Expected + this.radius;
-      },
-
-      fullCoefficientsFormula() {
-        return Object.values(this.coefficients)
-          .map(({label, formula, result}) => `${label} = ${formula} = ${truncateNumber(result)}`)
-          .join('\\\\');
-      },
-
-      densityHistogram() {
-        return step => this.values
-          .groupBy(x => roundBy(x, step))
-          .map(([k, xs]) => [Number(k), xs.length / this.values.length / step]);
-      },
-
-      countHistogram() {
-        return step => this.values
-          .groupBy(x => roundBy(x, step))
-          .map(([k, xs]) => [Number(k), xs.length]);
-      },
-
-      densityChart() {
-        const step = this.step;
-
-        return {
-          labels: this.densityHistogram(step).map(([k]) => k),
-          datasets: [
-              {
-            label: 'Actual density',
-            backgroundColor: 'rgba(0,220,24,0.3)',
-            data: this.densityHistogram(step)
-              .map(([, xs]) => xs / step)
-              .map(x => x.toFixed(10))
-          }, {
-            label: 'Expected density',
-            backgroundColor: 'rgba(92,95,90,0.3)',
-            data: this.densityHistogram(step)
-              .map(([k]) => k)
-              .map(this.calcSectionLength(step))
-              .map(k => k / (2 * this.radius))
-              .map(x => x.toFixed(10))
-          }]
-        }
-      },
-
-      distributionChart() {
-        const step = this.smallStep;
-
-        return {
-          labels: this.densityHistogram(step).map(([k]) => k),
-          datasets: [{
-            label: 'Actual distribution',
-            backgroundColor: 'rgba(0,220,24,0.3)',
-            data: this.calcDistribution(this.densityHistogram(step).map(([, density]) => density))
-              .map(x => x.toFixed(4))
-          }, {
-            label: 'Expected distribution',
-            backgroundColor: 'rgba(92,95,90,0.3)',
-            data: this.densityHistogram(step)
-              .map((_, i, arr) => i / arr.length)
-              .map(x => x.toFixed(4))
-          }]
-        }
-      },
-
-      countChart() {
-        const step = this.bigStep;
-        const histogram = this.countHistogram(step);
-
-        return {
-          labels: histogram.map(([k]) => k),
-          datasets: [{
-            label: 'Actual count',
-            backgroundColor: 'rgba(0,220,24,0.3)',
-            data: histogram.map(([, xs]) => xs)
-          }, {
-            label: 'Expected count',
-            backgroundColor: 'rgba(92,95,90,0.3)',
-            data: histogram
-              .map(([k]) => k)
-              .map(this.calcSectionLength(step))
-              .map(k => this.values.length * k / (2 * this.radius))
-              .map(x => x.toFixed(0))
-          }]
-        }
-      },
-
-      actualExpectedValue() {
-        return this.densityHistogram(this.smallStep)
-          .map(([k, p]) => k * p)
-          .reduce((acc, x) => acc + x, 0);
-      },
-
-      actualSquaredExpectedValue() {
-        return this.densityHistogram(this.smallStep)
-          .map(([k, p]) => k * k * p)
-          .reduce((acc, x) => acc + x, 0);
-      },
-
-      actualVariance() {
-        return this.actualSquaredExpectedValue - this.actualExpectedValue * this.actualExpectedValue;
-      },
-
-      actualDerivation() {
-        return Math.sqrt(this.actualVariance);
-      },
-
-      actualVariationCoefficient() {
-        return this.actualDerivation / this.actualExpectedValue
-      },
-
-      expectedValueError() {
-        return Math.abs(this.actualExpectedValue - this.coefficientsValues.Expected) / this.coefficientsValues.Expected
-      },
-
-      varianceError() {
-        return Math.abs(this.actualVariance - this.variance) / this.variance
-      },
-
-      derivationError() {
-        return Math.abs(this.actualDerivation - this.standardDerivation) / this.standardDerivation
-      },
-
-      variationCoefficientError() {
-        return Math.abs(this.actualVariationCoefficient - this.coefficientsValues.VariationCoefficient) / this.coefficientsValues.VariationCoefficient
-      }
-
-    },
-
-    methods: {
-      async generateValues() {
-        this.values = [];
-        await sleep(0);
-
-        const mt = MersenneTwister19937.seed(this.coefficientsValues.Seed);
-        const random = () => real(this.leftEdge, this.rightEdge, true)(mt);
-
-        this.values = [...Array(Number(this.valuesCount)).keys()].map(random);
-      },
-
-      calcDistribution(densities) {
-        return densities.reduce((acc, density) => {
-          if (acc) {
-            acc.push(density + acc[acc.length - 1]);
-          }
-
-          return acc || [density];
-        }, null)
-      },
-
-      calcSectionLength(step) {
-        return (k, i, arr) => {
-          if (i === 0) {
-            return (k + step - this.leftEdge) / step;
-          }
-
-          if (i === arr.length - 1) {
-            return (this.rightEdge - k) / step;
-          }
-
-          return 1;
-        }
-      }
-    },
-
-    filters: {
-      truncate(x, digits = 2) {
-        return truncateNumber(x, digits);
-      }
     }
-  }
 </script>
 <style scoped>
   .main {

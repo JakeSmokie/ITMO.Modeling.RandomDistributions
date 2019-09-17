@@ -173,7 +173,7 @@
     },
 
     mounted() {
-      this.name = 'Айгузин Иван Олегович';
+      this.name = 'Масалкин Савелий Евгеньевич';
       this.generateValues();
     },
 
@@ -328,9 +328,13 @@
             backgroundColor: 'rgba(92,95,90,0.3)',
             data: histogram
               .map(([k]) => k)
-              .map(this.calcSectionLength(step))
-              .map(k => this.values.length * k / (2 * this.radius))
-              .map(x => x.toFixed(0))
+              .map(k =>
+                  (Math.pow(k, this.coefficientsValues.Shape - 1) *
+                      Math.exp(-k / this.scale)) /
+                  Math.pow(this.scale, this.coefficientsValues.Shape) /
+                  factorial(this.coefficientsValues.Shape - 1)
+              )
+              .map(x => (x * this.values.length * step).toFixed(10))
           }]
         }
       },
@@ -404,12 +408,6 @@
           return acc || [density];
         }, null)
       },
-
-      calcSectionLength(step) {
-        return (k, i, arr) => {
-          return step;
-        }
-      }
     },
 
     filters: {
