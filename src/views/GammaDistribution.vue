@@ -341,7 +341,9 @@
                 (Math.pow(x, this.coefficientsValues.Shape - 1) * Math.exp(-x / this.scale)) /
                 Math.pow(this.scale, this.coefficientsValues.Shape) /
                 gamma
-              ).map(x => (x * this.values.length * step))
+              )
+              .map(x => x * this.values.length * step)
+              .map(x => x.toFixed(0))
           }]
         }
       },
