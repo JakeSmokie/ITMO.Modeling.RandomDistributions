@@ -267,8 +267,8 @@
       countHistogram() {
         return step => this.values
           .groupBy(x => roundBy(x, step))
-          .map(([k, xs]) => [Number(k), xs.length])
-          .sort(([a], [b]) => a - b);
+          .sort(([a], [b]) => a - b)
+          .map(([k, xs]) => [Number(k), xs.length]);
       },
 
       densityChart() {
@@ -330,8 +330,9 @@
             backgroundColor: 'rgba(92,95,90,0.3)',
             data: histogram
               .map(([k]) => k)
-              .map(() => this.values.length / (2 * this.radius / step))
-              .map(x => Math.ceil(x))
+              .map(this.calcSectionLength(step))
+              .map(k => this.values.length * k * step / (2 * this.radius))
+              .map(x => x.toFixed(0))
           }]
         }
       },
@@ -402,6 +403,20 @@
           return acc || [density];
         }, null)
       },
+
+      calcSectionLength(step) {
+        return (k, i, arr) => {
+          if (i === 0) {
+            return (k + step - this.leftEdge) / step;
+          }
+
+          if (i === arr.length - 1) {
+            return (this.rightEdge - k) / step;
+          }
+
+          return 1;
+        }
+      }
     },
 
     filters: {
