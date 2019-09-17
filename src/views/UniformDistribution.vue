@@ -260,13 +260,15 @@
       densityHistogram() {
         return step => this.values
           .groupBy(x => roundBy(x, step))
-          .map(([k, xs]) => [Number(k), xs.length / this.values.length / step]);
+          .map(([k, xs]) => [Number(k), xs.length / this.values.length / step])
+          .sort(([a], [b]) => a - b);
       },
 
       countHistogram() {
         return step => this.values
           .groupBy(x => roundBy(x, step))
-          .map(([k, xs]) => [Number(k), xs.length]);
+          .map(([k, xs]) => [Number(k), xs.length])
+          .sort(([a], [b]) => a - b);
       },
 
       densityChart() {
