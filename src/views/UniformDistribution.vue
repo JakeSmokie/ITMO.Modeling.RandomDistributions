@@ -159,8 +159,6 @@
         values: [],
         formulasShown: true,
         debounce: debounce(x => this.name = x, 0),
-        //step: 10,
-        //bigStep: 50,
         smallStep: 1,
 
         options: {
@@ -177,7 +175,7 @@
 
     computed: {
       step() {
-        return (this.radius / 25).toFixed(0);
+        return this.radius / 25;
       },
 
       bigStep() {
@@ -185,7 +183,7 @@
       },
 
       midBigStep() {
-        return (this.bigStep / 2).toFixed(0);
+        return this.radius / 10;
       },
 
       nameState() {
@@ -275,7 +273,7 @@
         const step = this.step;
 
         return {
-          labels: this.densityHistogram(step).map(([k]) => k),
+          labels: this.densityHistogram(step).map(([k]) => k.toFixed(0)),
           datasets: [
             {
               label: 'Actual density',
@@ -296,14 +294,15 @@
       },
 
       distributionChart() {
-        const step = this.smallStep;
+        const step = this.radius / 100;
 
         return {
-          labels: this.densityHistogram(step).map(([k]) => k),
+          labels: this.densityHistogram(step).map(([k]) => k.toFixed(0)),
           datasets: [{
             label: 'Actual distribution',
             backgroundColor: 'rgba(0,220,24,0.3)',
             data: this.calcDistribution(this.densityHistogram(step).map(([, density]) => density))
+              .map(x => x * step)
               .map(x => x.toFixed(4))
           }, {
             label: 'Expected distribution',
@@ -320,7 +319,7 @@
         const histogram = this.countHistogram(step);
 
         return {
-          labels: histogram.map(([k]) => k),
+          labels: histogram.map(([k]) => k.toFixed(0)),
           datasets: [{
             label: 'Actual count',
             backgroundColor: 'rgba(0,220,24,0.3)',
@@ -330,9 +329,8 @@
             backgroundColor: 'rgba(92,95,90,0.3)',
             data: histogram
               .map(([k]) => k)
-              .map(this.calcSectionLength(step))
-              .map(k => this.values.length * k * step / (2 * this.radius))
-              .map(x => x.toFixed(0))
+              .map(() => this.values.length / (2 * this.radius / step))
+              .map(x => Math.ceil(x))
           }]
         }
       },
@@ -403,20 +401,6 @@
           return acc || [density];
         }, null)
       },
-
-      calcSectionLength(step) {
-        return (k, i, arr) => {
-          if (i === 0) {
-            return (k + parseInt(step) - this.leftEdge) / parseInt(step);
-          }
-
-          if (i === arr.length - 1) {
-            return (this.rightEdge - k) / parseInt(step);
-          }
-
-          return 1;
-        }
-      }
     },
 
     filters: {
