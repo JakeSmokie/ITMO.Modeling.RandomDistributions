@@ -262,7 +262,8 @@
       densityHistogram() {
         return step => this.values
           .groupBy(x => roundBy(x, step))
-          .map(([k, xs]) => [Number(k), xs.length / this.values.length / step]);
+          .map(([k, xs]) => [Number(k), xs.length / this.values.length / step])
+          .map(([k, x], i, arr) => [k, x / (this.calcSectionLength(k, i, arr))]);
       },
 
       countHistogram() {
@@ -281,18 +282,17 @@
               label: 'Actual density',
               backgroundColor: 'rgba(0,220,24,0.3)',
               data: this.densityHistogram(step)
-                .map(([, xs]) => xs / step)
+                .map(([, xs]) => xs)
                 .map(x => x.toFixed(10))
-
-            }, {
+            },
+            {
               label: 'Expected density ',
               backgroundColor: 'rgba(92,95,90,0.3)',
               data: this.densityHistogram(step)
-                .map(([k]) => k)
-                .map(this.calcSectionLength(step))
-                .map(k => k / (2 * this.radius))
+                .map(() => 1 / (2 * this.radius))
                 .map(x => x.toFixed(10))
-            }]
+            }
+          ]
         }
       },
 
