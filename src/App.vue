@@ -1,5 +1,4 @@
 <template>
-<!--  GG -->
   <div class="d-flex flex-row align-items-stretch">
     <div class="text-nowrap bg-light border-right shadow-sm min-vh-100">
       <div
