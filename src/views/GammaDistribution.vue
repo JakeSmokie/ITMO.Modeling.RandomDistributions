@@ -144,7 +144,7 @@
   </b-container>
 </template>
 <script>
-  import {clamp, debounce, factorial, roundBy, sleep, truncateNumber} from '../utils';
+  import {debounce, factorial, roundBy, sleep, truncateNumber} from '../utils';
   import Katex from "../components/Katex";
   import LineChart from "../components/LineChart.js";
   import BarChart from "../components/BarChart";
@@ -245,7 +245,6 @@
         return step => this.values
           .groupBy(x => roundBy(x, step))
           .map(([k, xs]) => [Number(k), xs.length / this.values.length])
-          .map(([x, y]) => [clamp(x, this.leftEdge, this.rightEdge), y])
           .sort(([a], [b]) => a - b);
       },
 
@@ -253,7 +252,6 @@
         return step => this.values
           .groupBy(x => roundBy(x, step))
           .map(([k, xs]) => [Number(k), xs.length])
-          .map(([x, y]) => [clamp(x, this.leftEdge, this.rightEdge), y])
           .sort(([a], [b]) => a - b);
       },
 

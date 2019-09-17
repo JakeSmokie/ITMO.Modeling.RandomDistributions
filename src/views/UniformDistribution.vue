@@ -144,7 +144,7 @@
   </b-container>
 </template>
 <script>
-  import {clamp, debounce, roundBy, sleep, truncateNumber} from '../utils';
+  import {debounce, roundBy, sleep, truncateNumber} from '../utils';
   import Katex from "../components/Katex";
   import {MersenneTwister19937, real} from "random-js";
   import LineChart from "../components/LineChart.js";
@@ -261,7 +261,6 @@
         return step => this.values
           .groupBy(x => roundBy(x, step))
           .map(([k, xs]) => [Number(k), xs.length / this.values.length / step])
-          .map(([x, y]) => [clamp(x, this.leftEdge, this.rightEdge), y])
           .sort(([a], [b]) => a - b);
       },
 
@@ -269,7 +268,6 @@
         return step => this.values
           .groupBy(x => roundBy(x, step))
           .map(([k, xs]) => [Number(k), xs.length])
-          .map(([x, y]) => [clamp(x, this.leftEdge, this.rightEdge), y])
           .sort(([a], [b]) => a - b);
       },
 
@@ -404,20 +402,6 @@
           return acc || [density];
         }, null)
       },
-
-      calcSectionLength(step) {
-        return (k, i, arr) => {
-          if (i === 0) {
-            return (k + step - this.leftEdge) / step;
-          }
-
-          if (i === arr.length - 1) {
-            return (this.rightEdge - k) / step;
-          }
-
-          return 1;
-        }
-      }
     },
 
     filters: {
