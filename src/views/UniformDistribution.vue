@@ -285,7 +285,7 @@
                 .map(x => x.toFixed(10))
 
             }, {
-              label: 'Expected density',
+              label: 'Expected density ',
               backgroundColor: 'rgba(92,95,90,0.3)',
               data: this.densityHistogram(step)
                 .map(([k]) => k)
