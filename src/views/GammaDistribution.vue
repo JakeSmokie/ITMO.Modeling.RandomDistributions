@@ -277,7 +277,7 @@
         const gamma = factorial(this.coefficientsValues.Shape - 1);
 
         return {
-          labels: histogram.map(([k]) => k.toFixed(0)),
+          labels: histogram.map(([k]) => (k + step / 2).toFixed(0)),
           datasets: [{
             label: 'Actual density',
             backgroundColor: 'rgba(0,220,24,0.3)',
@@ -288,7 +288,7 @@
             label: 'Expected density',
             backgroundColor: 'rgba(92,95,90,0.3)',
             data: histogram
-              .map(([x]) => x)
+              .map(([x]) => x + step / 2)
               .map(x =>
                 (Math.pow(x, this.coefficientsValues.Shape - 1) * Math.exp(-x / this.scale)) /
                 Math.pow(this.scale, this.coefficientsValues.Shape) /
@@ -300,7 +300,6 @@
 
       distributionChart() {
         const step = this.midStep;
-        console.log([...Array(5).keys()].map(x => x + 1).reduce((acc, x) => acc + x, 0));
 
         return {
           labels: this.densityHistogram(step).map(([k]) => k),
@@ -328,7 +327,7 @@
         const gamma = factorial(this.coefficientsValues.Shape - 1);
 
         return {
-          labels: histogram.map(([x]) => x.toFixed(0)),
+          labels: histogram.map(([x]) => (x + step / 2).toFixed(0)),
           datasets: [{
             label: 'Actual count',
             backgroundColor: 'rgba(0,220,24,0.3)',
@@ -337,7 +336,7 @@
             label: 'Expected count',
             backgroundColor: 'rgba(92,95,90,0.3)',
             data: histogram
-              .map(([x]) => x)
+              .map(([x]) => x + step / 2)
               .map(x =>
                 (Math.pow(x, this.coefficientsValues.Shape - 1) * Math.exp(-x / this.scale)) /
                 Math.pow(this.scale, this.coefficientsValues.Shape) /
