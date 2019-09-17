@@ -248,6 +248,7 @@
                 return this.coefficientsValues.Expected - this.radius;
             },
 
+
             rightEdge() {
                 return this.coefficientsValues.Expected + this.radius;
             },
