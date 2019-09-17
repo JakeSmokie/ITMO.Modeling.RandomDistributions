@@ -273,10 +273,6 @@
 
       densityChart() {
         const step = this.step;
-        // console.log(step);
-        // console.log(this.densityHistogram(step)
-        //     .map(([k]) => k)
-        //     .map(this.calcSectionLength(step)));
 
         return {
           labels: this.densityHistogram(step).map(([k]) => k),
