@@ -302,7 +302,7 @@
         const step = this.midStep;
 
         return {
-          labels: this.densityHistogram(step).map(([k]) => k),
+          labels: this.densityHistogram(step).map(([k]) => (k + step / 2).toFixed(0)),
           datasets: [{
             label: 'Actual distribution',
             backgroundColor: 'rgba(0,220,24,0.3)',
@@ -312,7 +312,7 @@
             label: 'Expected distribution',
             backgroundColor: 'rgba(92,95,90,0.3)',
             data: this.densityHistogram(step)
-              .map(([x]) => x)
+              .map(([x]) => x + step / 2)
               .map(x => 1 - [...Array(this.coefficientsValues.Shape).keys()]
                 .map(i => Math.pow(x / this.scale, i) / factorial(i) * Math.exp(-x / this.scale))
                 .reduce((acc, x) => acc + x, 0))
