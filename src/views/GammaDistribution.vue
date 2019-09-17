@@ -329,7 +329,7 @@
         const histogram = this.countHistogram(step);
 
         return {
-          labels: histogram.map(([k]) => k),
+          labels: histogram.map(([k]) => k.toFixed(0)),
           datasets: [{
             label: 'Actual count',
             backgroundColor: 'rgba(0,220,24,0.3)',
