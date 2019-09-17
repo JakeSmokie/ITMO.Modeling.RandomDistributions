@@ -303,12 +303,12 @@
             //   .map(this.calcSectionLength(step))
             //   .map(k => k / (2 * this.radius))
             // ).map(x => x.toFixed(4))
-              data: this.densityHistogram(step)
-                  .map(([k]) => k)
-                  .map(k => 1 - [...Array(this.coefficientsValues.Shape - 1).keys()]
-                      .map(i => Math.pow(k / this.scale, i) / factorial(i) * Math.exp(-k / this.scale))
-                      .reduce((acc, x) => acc + x, 0))
-                  .map(k => k.toFixed(4))
+            data: this.densityHistogram(step)
+              .map(([k]) => k)
+              .map(k => 1 - [...Array(this.coefficientsValues.Shape - 1).keys()]
+                .map(i => Math.pow(k / this.scale, i) / factorial(i) * Math.exp(-k / this.scale))
+                .reduce((acc, x) => acc + x, 0))
+              .map(k => k.toFixed(4))
           }]
         }
       },
@@ -329,10 +329,10 @@
             data: histogram
               .map(([k]) => k)
               .map(k =>
-                  (Math.pow(k, this.coefficientsValues.Shape - 1) *
-                      Math.exp(-k / this.scale)) /
-                  Math.pow(this.scale, this.coefficientsValues.Shape) /
-                  factorial(this.coefficientsValues.Shape - 1)
+                (Math.pow(k, this.coefficientsValues.Shape - 1) *
+                  Math.exp(-k / this.scale)) /
+                Math.pow(this.scale, this.coefficientsValues.Shape) /
+                factorial(this.coefficientsValues.Shape - 1)
               )
               .map(x => (x * this.values.length * step).toFixed(10))
           }]
@@ -343,7 +343,7 @@
         return this.densityHistogram(this.smallStep)
           .map(([k, p]) => k * p)
           .reduce((acc, x) => acc + x, 0);
-        },
+      },
 
       actualAverage() {
         return this.values
