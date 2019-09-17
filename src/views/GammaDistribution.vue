@@ -298,11 +298,6 @@
           }, {
             label: 'Expected distribution',
             backgroundColor: 'rgba(92,95,90,0.3)',
-            // data: this.calcDistribution(this.densityHistogram(step)
-            //   .map(([k]) => k)
-            //   .map(this.calcSectionLength(step))
-            //   .map(k => k / (2 * this.radius))
-            // ).map(x => x.toFixed(4))
             data: this.densityHistogram(step)
               .map(([k]) => k)
               .map(k => 1 - [...Array(this.coefficientsValues.Shape - 1).keys()]
