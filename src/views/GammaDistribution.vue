@@ -300,7 +300,7 @@
             backgroundColor: 'rgba(92,95,90,0.3)',
             data: this.densityHistogram(step)
               .map(([k]) => k)
-              .map(k => 1 - [...Array(this.coefficientsValues.Shape - 1).keys()]
+              .map(k => 1 - [...Array(this.coefficientsValues.Shape).keys()]
                 .map(i => Math.pow(k / this.scale, i) / factorial(i) * Math.exp(-k / this.scale))
                 .reduce((acc, x) => acc + x, 0))
               .map(k => k.toFixed(4))
