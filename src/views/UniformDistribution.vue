@@ -101,7 +101,7 @@
         </template>
       </div>
       <b-card
-        v-if="values.length > 0"
+        v-if="coefficients && values.length > 0"
         class="main ml-4 text-left"
       >
         <katex>
@@ -227,7 +227,7 @@
 
       coefficientsValues() {
         return Object.fromEntries(
-          Object.entries(this.coefficients)
+          Object.entries(this.coefficients || {})
             .map(([key, {result}]) => [key, result])
         )
       },
@@ -383,6 +383,10 @@
       async generateValues() {
         this.values = [];
         await sleep(0);
+
+        if (!this.coefficients) {
+          return;
+        }
 
         const mt = MersenneTwister19937.seed(this.coefficientsValues.Seed);
         const random = () => real(this.leftEdge, this.rightEdge, true)(mt);
