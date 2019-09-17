@@ -171,7 +171,7 @@
     },
 
     mounted() {
-      this.name = 'Масалкин Савелий Евгеньевич';
+      this.name = '';
       this.generateValues();
     },
 
