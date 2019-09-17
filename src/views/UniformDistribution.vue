@@ -283,7 +283,6 @@
               data: this.densityHistogram(step)
                 .map(([, xs]) => xs)
                 .map(x => x.toFixed(10))
-
             },
             {
               label: 'Expected density',
@@ -310,7 +309,7 @@
             label: 'Expected distribution',
             backgroundColor: 'rgba(92,95,90,0.3)',
             data: this.densityHistogram(step)
-              .map((_, i, arr) => i / arr.length)
+              .map((_, i, arr) => (i + 1) / arr.length)
               .map(x => x.toFixed(4))
           }]
         }
