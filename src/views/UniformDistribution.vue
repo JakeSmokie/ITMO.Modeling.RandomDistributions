@@ -281,7 +281,7 @@
               label: 'Actual density',
               backgroundColor: 'rgba(0,220,24,0.3)',
               data: this.densityHistogram(step)
-                .map(([, xs]) => xs / step)
+                .map(([, xs]) => xs)
                 .map(x => x.toFixed(10))
 
             }, {
