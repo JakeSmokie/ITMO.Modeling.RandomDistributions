@@ -144,7 +144,7 @@
   </b-container>
 </template>
 <script>
-  import {debounce, roundBy, sleep, truncateNumber, factorial} from '../utils';
+  import {debounce, factorial, roundBy, sleep, truncateNumber} from '../utils';
   import Katex from "../components/Katex";
   import LineChart from "../components/LineChart.js";
   import BarChart from "../components/BarChart";
@@ -272,10 +272,10 @@
       },
 
       densityChart() {
-        const step = this.step;
+        const step = this.step / 2;
         const histogram = this.densityHistogram(step);
-
         const gamma = factorial(this.coefficientsValues.Shape - 1);
+
         return {
           labels: histogram.map(([k]) => k.toFixed(0)),
           datasets: [{
@@ -288,14 +288,12 @@
             label: 'Expected density',
             backgroundColor: 'rgba(92,95,90,0.3)',
             data: histogram
-              .map(([k]) => k)
-              .map(
-                k =>
-                  (Math.pow(k, this.coefficientsValues.Shape - 1) * Math.exp(-k / this.scale)) /
-                  Math.pow(this.scale, this.coefficientsValues.Shape) /
-                  gamma
-              )
-              .map(x => x.toFixed(10))
+              .map(([x]) => x)
+              .map(x =>
+                (Math.pow(x, this.coefficientsValues.Shape - 1) * Math.exp(-x / this.scale)) /
+                Math.pow(this.scale, this.coefficientsValues.Shape) /
+                gamma
+              ).map(x => x.toFixed(10))
           }]
         }
       },
@@ -310,16 +308,16 @@
             label: 'Actual distribution',
             backgroundColor: 'rgba(0,220,24,0.3)',
             data: this.calcDistribution(this.densityHistogram(step).map(([, density]) => density))
-              .map(x => x.toFixed(4))
+              .map(d => d.toFixed(4))
           }, {
             label: 'Expected distribution',
             backgroundColor: 'rgba(92,95,90,0.3)',
             data: this.densityHistogram(step)
-              .map(([k]) => k)
-              .map(k => 1 - [...Array(this.coefficientsValues.Shape).keys()]
-                .map(i => Math.pow(k / this.scale, i) / factorial(i) * Math.exp(-k / this.scale))
+              .map(([x]) => x)
+              .map(x => 1 - [...Array(this.coefficientsValues.Shape).keys()]
+                .map(i => Math.pow(x / this.scale, i) / factorial(i) * Math.exp(-x / this.scale))
                 .reduce((acc, x) => acc + x, 0))
-              .map(k => k.toFixed(4))
+              .map(x => x.toFixed(4))
           }]
         }
       },
@@ -327,9 +325,10 @@
       countChart() {
         const step = this.step;
         const histogram = this.countHistogram(step);
+        const gamma = factorial(this.coefficientsValues.Shape - 1);
 
         return {
-          labels: histogram.map(([k]) => k.toFixed(0)),
+          labels: histogram.map(([x]) => x.toFixed(0)),
           datasets: [{
             label: 'Actual count',
             backgroundColor: 'rgba(0,220,24,0.3)',
@@ -338,14 +337,12 @@
             label: 'Expected count',
             backgroundColor: 'rgba(92,95,90,0.3)',
             data: histogram
-              .map(([k]) => k)
-              .map(k =>
-                (Math.pow(k, this.coefficientsValues.Shape - 1) *
-                  Math.exp(-k / this.scale)) /
+              .map(([x]) => x)
+              .map(x =>
+                (Math.pow(x, this.coefficientsValues.Shape - 1) * Math.exp(-x / this.scale)) /
                 Math.pow(this.scale, this.coefficientsValues.Shape) /
-                factorial(this.coefficientsValues.Shape - 1)
-              )
-              .map(x => (x * this.values.length * step).toFixed(10))
+                gamma
+              ).map(x => (x * this.values.length * step))
           }]
         }
       },
