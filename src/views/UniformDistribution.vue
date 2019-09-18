@@ -273,45 +273,47 @@
 
       densityChart() {
         const step = this.step;
+        const histogram = this.densityHistogram(step);
 
         return {
-          labels: this.densityHistogram(step).map(([k]) => k.toFixed(0)),
+          labels: histogram.map(([x]) => x.toFixed(0)),
           datasets: [
             {
               label: 'Actual density',
               backgroundColor: 'rgba(0,220,24,0.3)',
-              data: this.densityHistogram(step)
+              data: histogram
                 .map(([x, y], i, arr) => [x, y / this.calcSectionLength(step)(x, i, arr)])
                 .map(([, y]) => y)
-                .map(x => x.toFixed(10))
+                .map(y => y.toFixed(10))
             },
             {
               label: 'Expected density',
               backgroundColor: 'rgba(92,95,90,0.3)',
-              data: this.densityHistogram(step)
+              data: histogram
                 .map(() => 1 / (2 * this.radius))
-                .map(x => x.toFixed(10))
+                .map(y => y.toFixed(10))
             }]
         }
       },
 
       distributionChart() {
         const step = this.radius / 100;
+        const histogram = this.densityHistogram(step);
 
         return {
-          labels: this.densityHistogram(step).map(([k]) => k.toFixed(0)),
+          labels: histogram.map(([k]) => k.toFixed(0)),
           datasets: [{
             label: 'Actual distribution',
             backgroundColor: 'rgba(0,220,24,0.3)',
-            data: this.calcDistribution(this.densityHistogram(step).map(([, density]) => density))
-              .map(x => x * step)
-              .map(x => x.toFixed(4))
+            data: this.calcDistribution(histogram.map(([, density]) => density))
+              .map(y => y * step)
+              .map(y => y.toFixed(4))
           }, {
             label: 'Expected distribution',
             backgroundColor: 'rgba(92,95,90,0.3)',
-            data: this.densityHistogram(step)
+            data: histogram
               .map((_, i, arr) => (i + 1) / arr.length)
-              .map(x => x.toFixed(4))
+              .map(y => y.toFixed(4))
           }]
         }
       },
@@ -330,10 +332,10 @@
             label: 'Expected count',
             backgroundColor: 'rgba(92,95,90,0.3)',
             data: histogram
-              .map(([k]) => k)
+              .map(([x]) => x)
               .map(this.calcSectionLength(step))
-              .map(k => this.values.length * k * step / (2 * this.radius))
-              .map(x => x.toFixed(0))
+              .map(l => this.values.length * l * step / (2 * this.radius))
+              .map(y => y.toFixed(0))
           }]
         }
       },
@@ -406,13 +408,13 @@
       },
 
       calcSectionLength(step) {
-        return (k, i, arr) => {
+        return (x, i, arr) => {
           if (i === 0) {
-            return (k + step - this.leftEdge) / step;
+            return (x + step - this.leftEdge) / step;
           }
 
           if (i === arr.length - 1) {
-            return (this.rightEdge - k) / step;
+            return (this.rightEdge - x) / step;
           }
 
           return 1;
