@@ -1,6 +1,6 @@
 <template>
-  <div class="d-flex flex-row align-items-stretch">
-    <div class="text-nowrap bg-light border-right shadow-sm min-vh-100">
+  <div class="d-flex flex-column flex-xl-row align-items-stretch">
+    <div class="text-nowrap bg-light border-right shadow-sm min-vh-xl-100">
       <div
         class="border-bottom p-2 pl-4 font-weight-bold"
         style="font-size: 20px"
@@ -38,5 +38,17 @@
   ::-webkit-scrollbar {
     width: 0;
     height: 0;
+  }
+
+  $xs: 0;
+  $sm: 576px;
+  $md: 768px;
+  $lg: 992px;
+  $xl: 1200px;
+
+  @media (min-width: $xl) {
+    .min-vh-xl-100 {
+      min-height: 100vh;
+    }
   }
 </style>
