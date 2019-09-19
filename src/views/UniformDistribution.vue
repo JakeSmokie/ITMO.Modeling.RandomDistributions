@@ -5,7 +5,7 @@
   >
     <div class="d-flex flex-row align-items-start">
       <div class="main text-center">
-        <b-input-group prepend="Ваше ФИО">
+        <b-input-group>
           <b-form-input
             :state="nameState"
             aria-describedby="input-live-help input-live-feedback"
@@ -14,6 +14,7 @@
             trim
             v-model="name"
             v-on:update="generateValues()"
+            placeholder="Ваше ФИО"
           ></b-form-input>
           <b-form-invalid-feedback id="input-live-feedback">
             Введённая строка не является ФИО
@@ -26,13 +27,14 @@
         >
           <b-form-group
             class="mb-0"
-            label-cols="3"
+            label-cols-md="3"
+            label-cols-sm="5"
             description="Количество генерируемых значений"
             label-for="range"
             label-align="center"
           >
             <template v-slot:label>
-              <katex class="mt-2">N = {{ valuesCount }}</katex>
+              <katex class="mt-2 text-nowrap">N = {{ valuesCount }}</katex>
             </template>
 
             <b-form-input
@@ -49,7 +51,7 @@
         </b-card>
 
         <template v-if="coefficients">
-          <div class="mt-4 d-flex flex-row">
+          <div class="mt-4 d-flex flex-column flex-md-row">
             <div class="mr-4 text-nowrap text-left">
               <b-card>
                 <katex>
@@ -124,7 +126,7 @@
       <b-card class="mt-4">
         <line-chart
           :chartdata="densityChart"
-          :options="options"
+          :options="{...options, ...densityOptions}"
         />
       </b-card>
       <b-card class="mt-4">
@@ -164,6 +166,17 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+        },
+
+        densityOptions: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                max: 0.004,
+                min: 0,
+              }
+            }]
+          }
         }
       }
     },
@@ -292,7 +305,7 @@
               data: histogram
                 .map(() => 1 / (2 * this.radius))
                 .map(y => y.toFixed(10))
-            }]
+            }],
         }
       },
 
@@ -379,7 +392,6 @@
       variationCoefficientError() {
         return Math.abs(this.actualVariationCoefficient - this.coefficientsValues.VariationCoefficient) / this.coefficientsValues.VariationCoefficient
       }
-
     },
 
     methods: {
@@ -394,6 +406,7 @@
         const mt = MersenneTwister19937.seed(this.coefficientsValues.Seed);
         const random = () => real(this.leftEdge, this.rightEdge, true)(mt);
 
+        // const random = () => Math.random() * (this.rightEdge - this.leftEdge) + this.leftEdge;
         this.values = [...Array(Number(this.valuesCount)).keys()].map(random);
       },
 
