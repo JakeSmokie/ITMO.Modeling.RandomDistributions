@@ -3,7 +3,7 @@
     fluid
     class="p-4"
   >
-    <div class="d-flex flex-row align-items-start">
+    <div class="d-flex flex-column align-items-start">
       <div class="main text-center">
         <b-input-group>
           <b-form-input
@@ -52,7 +52,7 @@
 
         <template v-if="coefficients">
           <div class="mt-4 d-flex flex-column flex-md-row">
-            <div class="mr-4 text-nowrap text-left">
+            <div class="text-nowrap text-left">
               <b-card>
                 <katex>
                   Ф = {{ fullName.surname.length || 0 }} \\
@@ -63,7 +63,7 @@
                 </katex>
               </b-card>
             </div>
-            <b-card class="w-100">
+            <b-card class="mt-4 w-100">
               <katex class="my-auto text-center">
                 V = {{ coefficientsValues.VariationCoefficient | truncate }} \\
                 M_{теор} = {{ coefficientsValues.Expected }} \\ \: \\
@@ -104,7 +104,7 @@
       </div>
       <b-card
         v-if="coefficients && values.length > 0"
-        class="main ml-4 text-left"
+        class="main mt-4 text-left"
       >
         <katex>
           M_{экс} = \sum{x_i * p_i} = {{ actualExpectedValue | truncate }} \\
