@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-column flex-xl-row align-items-stretch">
-    <div class="text-nowrap bg-light border-right shadow-sm min-vh-xl-100">
+    <div class="text-nowrap bg-light border-bottom shadow-sm min-vh-xl-100">
       <div
         class="border-bottom p-2 pl-4 font-weight-bold"
         style="font-size: 20px"
