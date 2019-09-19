@@ -13,7 +13,7 @@
             id="input-live"
             trim
             v-model="name"
-            v-on:update="generateValues()"
+            v-on:change="generateValues()"
             placeholder="Ваше ФИО"
           ></b-form-input>
           <b-form-invalid-feedback id="input-live-feedback">
